@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Media;
-using System.Text;
-using BattleCity.Shared;
+﻿using BattleCity.Shared;
 
 namespace BattleCity.SoundPart
 {

@@ -1,16 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
+using BattleCity.Information;
 using BattleCity.Interfaces;
+using BattleCity.Shared;
 
 namespace BattleCity.MapItems.Base
 {
     [Serializable]
-    internal abstract class BaseItem : InformationGame, ICollision
+    public abstract class BaseItem : GameInformation, ICollision
     {
         protected BaseItem(Rectangle rect)
             : base(rect)
+        { }
+
+        protected BaseItem(Point position)
+            : base(new Rectangle(position.X, position.Y, Constants.Size.WidthTile, Constants.Size.HeightTile))
         { }
 
         public Rectangle Rect => SpriteRectangle;

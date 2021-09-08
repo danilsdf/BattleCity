@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
 
 namespace BattleCity.Interfaces
 {
-    interface IDraw
+    public interface IDraw
     {
-        /// <summary>
-        /// Paint object on the map
-        /// </summary>
         void Draw(Graphics g, Point offset);
     }
 }

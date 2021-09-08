@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BattleCity.MapItems.ShellModule;
 
 namespace BattleCity.Interfaces
 {
-    interface IResponse
+    public interface IResponse
     {
-        void Response(ShellObj shellObj);
+        void Response(Shell shell);
     }
 }

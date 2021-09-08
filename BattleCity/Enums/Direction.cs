@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BattleCity.Enums
+﻿namespace BattleCity.Enums
 {
-    internal enum Direction
+    public enum Direction
     {
         Up,
         Right,

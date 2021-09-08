@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace BattleCity.Shared
 {
@@ -25,9 +23,7 @@ namespace BattleCity.Shared
 
             public const int WidthBoard = 26 * WidthTile;
 
-            private const int ConstWindowClientHeight = 28 * HeightTile;
-
-            public static int WindowClientHeight { get; private set; }
+            public const int WindowClientHeight = 28 * HeightTile;
 
             public const int WindowClientWidth = 31 * WidthTile;
         }
@@ -36,23 +32,9 @@ namespace BattleCity.Shared
         public static class Timer
         {
 
-            public const int DetonationTimeout = 6;
+            public const int RemovePointsTimeout = 10;
 
-            public const int TimerInterval = 20;
-
-            public const int AppearanceOfTankTimeout = 48;
-
-            public const int BigDetonationTimeout = 10;
-
-            public const int GameOverTimeout = 4000;
-
-            public const int ScreenGameOverTimeout = 2000;
-
-            public const int CloseTimeout = 300;
-
-            public static TimeSpan DelayScreenLoadLevel = TimeSpan.FromSeconds(3);
-
-            public static TimeSpan DelayScreenRecord = TimeSpan.FromSeconds(8);
+            public const int GameOverTimeout = 200;
 
             public static TimeSpan GetDelayScreenPoints(int countTank)
             {
@@ -74,11 +56,11 @@ namespace BattleCity.Shared
 
             public const char CharIce = '-';
 
-            public const char CharPlainTank = 'P';
+            public const char CharSimpleTank = 'P';
 
-            public const char CharArmoredPersonnelCarrierTank = 'A';
+            public const char CharFastTank = 'A';
 
-            public const char CharQuickFireTank = 'R';
+            public const char CharPowerTank = 'R';
 
             public const char CharArmoredTank = 'B';
         }
@@ -86,28 +68,14 @@ namespace BattleCity.Shared
         public static class Path
         {
 
-            public const string TexturePath = @"Content\Textures\";
+            public const string ResxFile = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\BattleCity";
 
             public const string SoundPath = @"Content\Media\";
 
-            public const string MaxPointsPath = @"Content\MaxPoints";
+            public const string LevelMaps = @"Content\LevelMaps";
 
         }
-
-        public static class Volume
-        {
-            public const float VolumeDefault = 0.5f;
-
-            public const float VolumeIncrement = 0.1f;
-        }
-
 
         public const int CountLevel = 35;
-
-        public static readonly Color BackColor = Color.DimGray;
-
-        public const int DelayChangeColorBonusTank = 6;
-
-        public const int ZIndexTank = 5;
 }
 }
