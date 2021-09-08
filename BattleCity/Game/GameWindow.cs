@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Resources;
 using System.Windows.Forms;
 using BattleCity.Shared;
 
@@ -10,7 +9,7 @@ namespace BattleCity.Game
         public GameWindow(Control control)
         {
             Parent = control;
-            //this.BackgroundImage = Properties.Resources.PlayingField;
+            BackgroundImage = System.Drawing.Image.FromFile(Constants.Path.Content + "PlayingField.png");
             Location = new Point();
             ClientSize = new Size(Constants.Size.WindowClientWidth, Constants.Size.WindowClientWidth);
             BackColor = Color.Black;

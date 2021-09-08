@@ -37,7 +37,11 @@ namespace BattleCity.MapItems.TankModule
         public void Response(Shell shell)
         {
             if (shell.TankOwner != MapItemKey.TankEnemy) return;
-
+            if (CurrentLevel.PlayerHealth != 0)
+            {
+                CurrentLevel.PlayerHealth--;
+                return;
+            }
             CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
             shell.Detonation = true;
 

@@ -20,6 +20,8 @@ namespace BattleCity.Game
 
         public static LevelState LevelState;
 
+        public static int PlayerHealth;
+
         private CurrentLevelInformation _currentLevelInformation;
         public static Dictionary<MapItemKey, List<BaseItem>> DictionaryObjGame;
         private readonly List<BaseItem> _listTankEnemy ;
@@ -66,6 +68,8 @@ namespace BattleCity.Game
             DictionaryObjGame.Add(MapItemKey.Water, _listWater);
             DictionaryObjGame.Add(MapItemKey.Shell, _listShell);
             DictionaryObjGame.Add(MapItemKey.Other, _listOther);
+
+            PlayerHealth = 3;
         }
 
         private void TimerWin()
@@ -87,7 +91,7 @@ namespace BattleCity.Game
 
             LevelState = LevelState.Download;
             var levelName = _currentLevel < 10 ? $"0{_currentLevel}" : _currentLevel.ToString();
-            var path = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\BattleCity\Content\LevelMaps\01";
+            var path = Constants.Path.LevelMaps + levelName;
             var linesTileMap = File.ReadAllLines(path);
             _tanksFromMap = linesTileMap[26];
 

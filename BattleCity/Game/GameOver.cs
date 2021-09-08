@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Resources;
 using System.Windows.Forms;
 using BattleCity.Shared;
 
@@ -11,7 +10,6 @@ namespace BattleCity.Game
 
         public GameOver(Control control)
         {
-
             _gameOver = new Label
             {
                 Parent = control,
