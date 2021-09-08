@@ -11,7 +11,6 @@ namespace BattleCity.Game
 
         public GameOver(Control control)
         {
-            //using var resxSet = new ResXResourceSet(Constants.Path.ResxFile);
 
             _gameOver = new Label
             {
@@ -19,7 +18,7 @@ namespace BattleCity.Game
                 Location = new Point(0, 0),
                 Size = new Size(control.ClientRectangle.Width, control.ClientRectangle.Height),
                 BackColor = Color.Black,
-                //Image = (Bitmap) resxSet.GetObject("GameOver", true),
+                Image = Image.FromFile(Constants.Path.Content + $"GameOver.png"),
                 ImageAlign = ContentAlignment.MiddleCenter
             };
         }

@@ -48,14 +48,13 @@ namespace BattleCity.Game
 
         private static void BackgroundPainting(Graphics g)
         {
-            using var resxSet = new ResXResourceSet(Constants.Path.ResxFile);
-            
-            Image dashboard = (Bitmap)resxSet.GetObject("Dashboard", true);
+
+            var dashboard = Image.FromFile(Constants.Path.Content + $"Dashboard.png");
             g.TranslateTransform(Constants.Size.HeightBoard + Constants.Size.WidthBoard, 0);
             g.DrawImage(dashboard, 0, 0, Constants.Size.WidthTile * 4, Constants.Size.HeightBoard + Constants.Size.HeightTile * 2);
             g.ResetTransform();
 
-            Image borderHorizontal = (Bitmap)resxSet.GetObject("BorderHorizontal", true);
+            Image borderHorizontal = Image.FromFile(Constants.Path.Content + $"BorderHorizontal.png");
             g.TranslateTransform(0, 0);
             g.DrawImage(borderHorizontal, 0, 0, Constants.Size.WidthTile + Constants.Size.HeightTile * 2, Constants.Size.HeightTile);
             g.ResetTransform();
@@ -64,7 +63,7 @@ namespace BattleCity.Game
             g.DrawImage(borderHorizontal, 0, 0, Constants.Size.WidthBoard + Constants.Size.HeightTile * 2, Constants.Size.HeightTile);
             g.ResetTransform();
 
-            Image borderVertical = (Bitmap)resxSet.GetObject("BorderVertical", true);
+            Image borderVertical = Image.FromFile(Constants.Path.Content + $"BorderVertical.png");
             g.TranslateTransform(0, 0);
             g.DrawImage(borderVertical, 0, 0, Constants.Size.WidthTile, Constants.Size.HeightBoard + Constants.Size.HeightTile * 2);
             g.ResetTransform();

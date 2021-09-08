@@ -4,6 +4,7 @@ using BattleCity.Game;
 using BattleCity.Interfaces;
 using BattleCity.MapItems.Base;
 using BattleCity.MapItems.ShellModule;
+using BattleCity.Shared;
 
 namespace BattleCity.MapItems.StaticItems
 {
@@ -12,7 +13,7 @@ namespace BattleCity.MapItems.StaticItems
         private bool _isAlive;
 
         public Eagle(Point spawnPoint)
-            : base(spawnPoint)
+            : base(new Rectangle(spawnPoint.X, spawnPoint.Y, Constants.Size.WidthTank, Constants.Size.HeightTank))
         {
             SpriteImage = GetImage(GetType().Name);
             _isAlive = true;

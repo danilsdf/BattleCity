@@ -18,20 +18,15 @@ namespace BattleCity.Game
         private Label marker;
         private int position = 0;
 
-        /// <summary>
-        /// конструктор екрана игры
-        /// </summary>
-        /// <param name="control">принимает родительский Control</param>
         public StartMenu(Control control)
         {
-            //using var resxSet = new ResXResourceSet(Constants.Path.ResxFile);
             _menuState = MenuState.Game;
 
             menuControl = new Label();
             menuControl.Parent = control;
             menuControl.Location = new Point(0, 0);
-            //menuControl.Image = (Bitmap)resxSet.GetObject("Menu", true);
-            //menuControl.Size = menuControl.Image.Size;
+            menuControl.Image = Image.FromFile(Constants.Path.Content + $"Menu.png");
+            menuControl.Size = menuControl.Image.Size;
 
             player = new Label();
             player.Parent = menuControl;
@@ -45,8 +40,8 @@ namespace BattleCity.Game
 
             marker = new Label();
             marker.Parent = menuControl;
-            //marker.Image = (Bitmap)resxSet.GetObject("Marker", true);
-            //marker.Size = marker.Image.Size;
+            marker.Image = Image.FromFile(Constants.Path.Content + $"Marker.png");
+            marker.Size = marker.Image.Size;
         }
 
         public MenuState MenuState{ get; set; }

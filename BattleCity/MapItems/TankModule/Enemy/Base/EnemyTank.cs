@@ -7,7 +7,7 @@ using BattleCity.MapItems.ShellModule;
 
 namespace BattleCity.MapItems.TankModule.Enemy.Base
 {
-    public abstract class EnemyTank : ActiveTank, IAddTank
+    public abstract class EnemyTank : ActiveTank, IAddTank, IResponse
     {
         private int _rndDirection = 0, _fireDirection = 0;
         private readonly int _points;

@@ -67,12 +67,13 @@ namespace BattleCity.Shared
 
         public static class Path
         {
+            public static string PathToProject = Environment.CurrentDirectory;
 
-            public const string ResxFile = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\BattleCity";
+            public const string SoundPath = @"..\..\..\Content\Media\";
 
-            public const string SoundPath = @"Content\Media\";
+            public static string Content = @"..\..\..\Content\Images\";
 
-            public const string LevelMaps = @"Content\LevelMaps";
+            public static string LevelMaps = @"..\..\..\Content\LevelMaps\";
 
         }
 

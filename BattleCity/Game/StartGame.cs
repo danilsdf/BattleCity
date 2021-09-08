@@ -58,7 +58,7 @@ namespace BattleCity.Game
             switch (GameState)
             {
                 case GameState.Menu:
-                    //menu.Draw();
+                    menu.Draw();
                     break;
                 case GameState.Game:
                     _currentLevel.Draw();
@@ -78,7 +78,7 @@ namespace BattleCity.Game
             switch (GameState)
             {
                 case GameState.Menu:
-                    //menu.Update();
+                    menu.Update();
                     break;
                 case GameState.Game:
                     _currentLevel.Update();

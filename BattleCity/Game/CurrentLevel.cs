@@ -86,8 +86,8 @@ namespace BattleCity.Game
             _currentLevel = levelNumber;
 
             LevelState = LevelState.Download;
-
-            var path = Constants.Path.LevelMaps + _currentLevel;
+            var levelName = _currentLevel < 10 ? $"0{_currentLevel}" : _currentLevel.ToString();
+            var path = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\BattleCity\Content\LevelMaps\01";
             var linesTileMap = File.ReadAllLines(path);
             _tanksFromMap = linesTileMap[26];
 
@@ -149,7 +149,7 @@ namespace BattleCity.Game
                 {
                     ListInformation.Remove(_currentLevelInformation);
 
-                    var rect = new Rectangle(_spawnPlayer.X, _spawnPlayer.Y, Constants.Size.HeightTile, Constants.Size.WidthTile);
+                    var rect = new Rectangle(_spawnPlayer.X, _spawnPlayer.Y, Constants.Size.HeightTank, Constants.Size.WidthTank);
 
                     _player = new PlayerTank(rect, 4, Direction.Up, 8);
                     new TankAppearance(_spawnPlayer, _player);
@@ -168,21 +168,21 @@ namespace BattleCity.Game
                     player.Update();
                 }
             }
-            foreach (var other in _listOther)
+            for (var i = 0; i < _listOther.Count; i++)
             {
-                other.Update();
+                _listOther[i].Update();
             }
             foreach (var item in _listWater)
             {
                 item.Update();
             }
-            foreach (var enemy in _listTankEnemy)
+            for (var i = 0; i < _listTankEnemy.Count; i++)
             {
-                enemy.Update();
+                _listTankEnemy[i].Update();
             }
-            foreach (var shell in _listShell)
+            for (var i = 0; i < _listShell.Count; i++)
             {
-                shell.Update();
+                _listShell[i].Update();
             }
 
 

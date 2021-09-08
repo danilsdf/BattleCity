@@ -24,13 +24,12 @@ namespace BattleCity.Information
             g.ResetTransform();
         }
 
-        public Bitmap GetImage(string name)
+        public Image GetImage(string name)
         {
-            using var resxSet = new ResXResourceSet(Constants.Path.ResxFile);
-            return (Bitmap)resxSet.GetObject(name, true);
+            return Image.FromFile(Constants.Path.Content + $"{name}.png");
         }
 
-        public Bitmap GetImage(int number)
+        public Image GetImage(int number)
         {
             var name = string.Empty;
             if (number < 10) name = "0";

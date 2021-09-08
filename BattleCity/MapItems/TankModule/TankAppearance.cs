@@ -16,7 +16,7 @@ namespace BattleCity.MapItems.TankModule
             : base(new Rectangle(position.X, position.Y, Constants.Size.WidthTank, Constants.Size.HeightTank))
         {
             _tank = tank;
-            _size = 0;
+            _size = 1;
             _cycles = 0;
 
             SpriteImage = GetImage($"Star{_size}");
@@ -28,7 +28,7 @@ namespace BattleCity.MapItems.TankModule
         {
             if (_cycles % 4 == 0)
             {
-                if (_size == 3) _size = 0;
+                if (_size == 3) _size = 1;
                 else _size++;
             }
 

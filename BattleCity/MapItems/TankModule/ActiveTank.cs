@@ -11,18 +11,18 @@ namespace BattleCity.MapItems.TankModule
             : base(rect, speed, direction, shellSpeed)
         { }
 
-        private int _current = 0;
+        private int _current = 1;
 
         protected void Animation()
         {
-            _current = _current == 1 ? 0 : 1;
+            _current = _current == 2 ? 1 : 2;
 
             SpriteImage = Direction switch
             {
-                Direction.Up => GetImage($"{Name}Up_{_current}"),
-                Direction.Right => GetImage($"{Name}Right_{_current}"),
-                Direction.Down => GetImage($"{Name}Down_{_current}"),
-                Direction.Left => GetImage($"{Name}Left_{_current}"),
+                Direction.Up => GetImage($"{Name}Up{_current}"),
+                Direction.Right => GetImage($"{Name}Right{_current}"),
+                Direction.Down => GetImage($"{Name}Down{_current}"),
+                Direction.Left => GetImage($"{Name}Left{_current}"),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

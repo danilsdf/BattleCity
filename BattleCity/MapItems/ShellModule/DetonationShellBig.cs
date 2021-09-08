@@ -49,7 +49,7 @@ namespace BattleCity.MapItems.ShellModule
         public void CurrentUpdate(string name)
         {
             IntervalBetweenMove++;
-            SpriteImage = GetImage(name);
+            SpriteImage = GetImage($"{name}");
             Position();
         }
     }
