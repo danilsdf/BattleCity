@@ -115,6 +115,16 @@ namespace BattleCity.Game
                     _gameWindow.BringToFront();
                     menu.ResetPosition();
                 }
+                else if (Keyboard.Enter && menu.MenuState == MenuState.Mute)
+                {
+                    Keyboard.Enter = false;
+                    SoundService.Mute();
+                    menu._changeVolume.Text = SoundService.IsMuted ? "Turn on Music" : "Turn off Music";
+
+                    GameState = GameState.Game;
+                    _gameWindow.BringToFront();
+                    menu.ResetPosition();
+                }
             }
         }
     }

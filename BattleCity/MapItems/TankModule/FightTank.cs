@@ -23,7 +23,7 @@ namespace BattleCity.MapItems.TankModule
 
             if (tankOwner == MapItemKey.Player)
             {
-                SoundService .SoundFire();
+                SoundService.SoundFire();
             }
 
             Shell = CreateShellByDirection(tankOwner);

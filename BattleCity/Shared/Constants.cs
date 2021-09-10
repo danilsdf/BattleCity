@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BattleCity.Shared
+﻿namespace BattleCity.Shared
 {
     public class Constants
     {
@@ -35,11 +33,6 @@ namespace BattleCity.Shared
 
             public const int GameOverTimeout = 200;
 
-            public static TimeSpan GetDelayScreenPoints(int countTank)
-            {
-                return TimeSpan.FromMilliseconds(150 * (countTank + 9) + 1000);
-            }
-
         }
 
         public static class CharValue
@@ -66,8 +59,6 @@ namespace BattleCity.Shared
 
         public static class Path
         {
-            public static string PathToProject = Environment.CurrentDirectory;
-
             public const string SoundPath = @"..\..\..\Content\Media\";
 
             public static string Content = @"..\..\..\Content\Images\";

@@ -3,61 +3,74 @@ using System.Threading;
 using System.Windows.Forms;
 using BattleCity.Enums;
 using BattleCity.Shared;
+using BattleCity.SoundPart;
 
 namespace BattleCity.Game
 {
-    class StartMenu
+    internal class StartMenu
     {
-        private MenuState _menuState;
-        private static Label menuControl;
-        private Label player;
-        private Label marker;
-        private int position = 0;
+        private static Label _menuControl;
+        private Label _player;
+        public readonly Label _changeVolume;
+        private readonly Label _marker;
+        private int _position = 0;
 
         public StartMenu(Control control)
         {
-            _menuState = MenuState.Game;
+            _menuControl = new Label
+            {
+                Parent = control,
+                Location = new Point(0, 0),
+                Image = Image.FromFile(Constants.Path.Content + $"Menu.png")
+            };
+            _menuControl.Size = _menuControl.Image.Size;
 
-            menuControl = new Label();
-            menuControl.Parent = control;
-            menuControl.Location = new Point(0, 0);
-            menuControl.Image = Image.FromFile(Constants.Path.Content + $"Menu.png");
-            menuControl.Size = menuControl.Image.Size;
+            _player = new Label
+            {
+                Parent = _menuControl,
+                Location = new Point(265, 770),
+                BackColor = Color.Transparent,
+                Font = new Font("COURER", 20, FontStyle.Bold),
+                ForeColor = Color.White,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Size = new Size(200, 30),
+                Text = "1 PLAYER"
+            };
 
-            player = new Label();
-            player.Parent = menuControl;
-            player.Location = new Point(265, 770);
-            player.BackColor = Color.Transparent;
-            player.Font = new Font("COURER", 20, FontStyle.Bold);
-            player.ForeColor = Color.White;
-            player.TextAlign = ContentAlignment.MiddleLeft;
-            player.Size = new Size(200, 30);
-            player.Text = "1 PLAYER";
+            _changeVolume = new Label
+            {
+                Parent = _menuControl,
+                Location = new Point(265, 800),
+                BackColor = Color.Transparent,
+                Font = new Font("COURER", 20, FontStyle.Bold),
+                ForeColor = Color.White,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Size = new Size(200, 30),
+                Text = "Turn off Music"
+            };
 
-            marker = new Label();
-            marker.Parent = menuControl;
-            marker.Image = Image.FromFile(Constants.Path.Content + $"Marker.png");
-            marker.Size = marker.Image.Size;
+            _marker = new Label {Parent = _menuControl, Image = Image.FromFile(Constants.Path.Content + $"Marker.png")};
+            _marker.Size = _marker.Image.Size;
         }
 
         public MenuState MenuState{ get; set; }
 
-        public static Control MenuControl => menuControl;
+        public static Control MenuControl => _menuControl;
 
         public void ResetPosition()
         {
-            position = 0;
+            _position = 0;
         }
 
         public void Update()
         {
-            if (menuControl.Top > menuControl.Parent.Height - menuControl.Height - 30)
+            if (_menuControl.Top > _menuControl.Parent.Height - _menuControl.Height - 30)
             {
-                position -= 4;
+                _position -= 4;
             }
             else if (Keyboard.Down)
             {
-                if (MenuState < MenuState.LoadGame)
+                if (MenuState < MenuState.Mute)
                 {
                     MenuState++;
                     Thread.Sleep(200);
@@ -72,23 +85,12 @@ namespace BattleCity.Game
                 }
             }
 
-            switch (MenuState)
-            {
-                case MenuState.Game:
-                    marker.Location = new Point(210, 765);
-                    break;
-                case MenuState.SaveGame:
-                    marker.Location = new Point(210, 795);
-                    break;
-                case MenuState.LoadGame:
-                    marker.Location = new Point(210, 825);
-                    break;
-            }
+            _marker.Location = MenuState == MenuState.Game ? new Point(210, 765) : new Point(210, 795);
         }
 
         public void Draw()
         {
-            menuControl.Location = new Point(-40, position);
+            _menuControl.Location = new Point(-40, _position);
         }
     }
 }

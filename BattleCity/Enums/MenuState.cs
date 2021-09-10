@@ -3,7 +3,6 @@
     public enum MenuState
     {
         Game,
-        SaveGame,
-        LoadGame
+        Mute,
     }
 }
