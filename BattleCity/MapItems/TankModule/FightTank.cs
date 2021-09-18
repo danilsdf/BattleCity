@@ -11,8 +11,8 @@ namespace BattleCity.MapItems.TankModule
         protected int ShellSpeed;
         protected Shell Shell;
 
-        protected FireTank(Rectangle rect, int velocity, Direction direction, int shellSpeed)
-            : base(rect, velocity, direction)
+        protected FireTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
+            : base(rect, speed, direction)
         {
             ShellSpeed = shellSpeed;
         }

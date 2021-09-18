@@ -5,7 +5,7 @@ namespace BattleCity.SoundPart
     public class SoundService
     {
         public static SoundPlayer MoveSound = new SoundPlayer(SoundPath.MovePath);
-        private static bool _isMuted;
+        private static bool _isMuted = true;
         public static bool IsMuted => _isMuted;
         private static bool _move;
 

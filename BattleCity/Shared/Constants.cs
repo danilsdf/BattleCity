@@ -16,9 +16,11 @@
 
             public const int WidthShell = 5;
 
-            public const int HeightBoard = 26 * HeightTile;
+            public const int SquareCount = 26;
 
-            public const int WidthBoard = 26 * WidthTile;
+            public const int HeightBoard = SquareCount * HeightTile;
+
+            public const int WidthBoard = SquareCount * WidthTile;
 
             public const int WindowClientHeight = 28 * HeightTile;
 
@@ -30,6 +32,8 @@
         {
 
             public const int RemovePointsTimeout = 10;
+
+            public const int RemovePathTimeout = 2;
 
             public const int GameOverTimeout = 200;
 

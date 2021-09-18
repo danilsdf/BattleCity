@@ -28,7 +28,9 @@ namespace BattleCity.MapItems.TankModule
             _spawnFirstEnemy = new Point();
             _spawnSecondEnemy = new Point(12 * Constants.Size.WidthTile, 0);
             _spawnThirdEnemy = new Point(24 * Constants.Size.HeightTile, 0);
-
+            //CurrentLevel.GameArray[0, 0] = 3;
+            //CurrentLevel.GameArray[12, 0] = 3;
+            //CurrentLevel.GameArray[24, 0] = 3;
             _countEnemy = 20;
         }
 

@@ -8,7 +8,7 @@ namespace BattleCity.Game
     public abstract class MoveGame : BaseItem
     {
         public Direction Direction;
-        protected int Speed;
+        public int Speed;
 
         protected MoveGame(Rectangle rect, int speed, Direction direction)
             : base(rect)

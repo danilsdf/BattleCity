@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using BattleCity.Algorithms;
 using BattleCity.Enums;
 using BattleCity.Information;
 using BattleCity.Interfaces;
@@ -24,6 +26,7 @@ namespace BattleCity.Game
 
         private CurrentLevelInformation _currentLevelInformation;
         public static Dictionary<MapItemKey, List<BaseItem>> DictionaryObjGame;
+        //public static int[,] GameArray;
         private readonly List<BaseItem> _listTankEnemy ;
         private readonly List<BaseItem> _listPlayer;
         private readonly List<BaseItem> _listWall;
@@ -42,6 +45,8 @@ namespace BattleCity.Game
 
         private int _timerWin;
 
+        private static AlgorithmType CurrentAlgorithm = AlgorithmType.Bfs;
+
         private SpawnTanks _enemyTanks;
         private string _tanksFromMap;
 
@@ -49,6 +54,7 @@ namespace BattleCity.Game
         {
             ListInformation = new List<IDraw>();
             DictionaryObjGame = new Dictionary<MapItemKey, List<BaseItem>>();
+            //GameArray = new int[Constants.Size.SquareCount, Constants.Size.SquareCount];
 
             _listTankEnemy = new List<BaseItem>();
             _listPlayer = new List<BaseItem>();
@@ -60,6 +66,9 @@ namespace BattleCity.Game
 
             _spawnEagle = new Point(12 * Constants.Size.WidthTile, 24 * Constants.Size.HeightTile);
             _spawnPlayer = new Point(8 * Constants.Size.WidthTile, 24 * Constants.Size.HeightTile);
+            //GameArray[12, 24] = 1;
+            //GameArray[8, 24] = 2;
+
 
             DictionaryObjGame.Add(MapItemKey.Ice, _listIce);
             DictionaryObjGame.Add(MapItemKey.TankEnemy, _listTankEnemy);
@@ -113,19 +122,25 @@ namespace BattleCity.Game
                     {
                         case Constants.CharValue.CharBrickWall:
                             _listWall.Add(new BrickWall(new Point(x, y)));
+                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 1;
                             break;
                         case Constants.CharValue.CharConcreteWall:
                             _listWall.Add(new ConcreteWall(new Point(x, y)));
+                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 1;
                             break;
                         case Constants.CharValue.CharWater:
                             _listWater.Add(new Water(new Point(x, y)));
+                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 1;
                             break;
                         case Constants.CharValue.CharForest:
                             _listOther.Add(new Forest(new Point(x, y)));
+                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 0;
                             break;
                         case Constants.CharValue.CharIce:
+                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 0;
                             _listIce.Add(new Ice(new Point(x, y)));
                             break;
+                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 0;
                     }
                     x += Constants.Size.WidthTile;
                 }
@@ -213,10 +228,28 @@ namespace BattleCity.Game
                 }
                 case LevelState.Game:
                 {
+                    if (CurrentAlgorithm == AlgorithmType.Bfs)
+                    {
+                        foreach (var item in _listTankEnemy.Select(enemy => BfsSearcher.GetRoute(_player.Rect.Location,
+                            enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                        {
+                            new ColorPoint(item, "RedPoint");
+                        }
+                    }
+                    else if (CurrentAlgorithm == AlgorithmType.Dfs)
+                    {
+                        foreach (var item in _listTankEnemy.Select(enemy => DfsSearcher.GetRoute(_player.Rect.Location,
+                            enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                        {
+                            new ColorPoint(item, "GreenPoint");
+                        }
+                    }
+
                     if (_listTankEnemy.Count < 3)
                     {
                         _enemyTanks.AddEnemy();
                     }
+
                     break;
                 }
                 case LevelState.Download:
@@ -227,6 +260,45 @@ namespace BattleCity.Game
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        public static bool IsPointEmpty(Point point)
+        {
+            var enums = Enum.GetValues(typeof(MapItemKey)).Cast<MapItemKey>().Where(type => type != MapItemKey.Other
+                                                                                       && type != MapItemKey.Player
+                                                                                       && type != MapItemKey.Ice);
+
+            if (point.X > Constants.Size.WidthBoard - Constants.Size.WidthTank
+                || point.Y > Constants.Size.HeightBoard - Constants.Size.HeightTank
+                || point.X < 0
+                || point.Y < 0)
+            {
+                return false;
+            }
+
+            foreach (var mapItemKey in enums)
+            {
+                foreach (var baseItem in DictionaryObjGame[mapItemKey])
+                {
+                    if (baseItem.Rect.X >= point.X && baseItem.Rect.X + baseItem.Rect.Width <= point.X) return false;
+
+                    if (baseItem.Rect.Y >= point.Y && baseItem.Rect.Y + baseItem.Rect.Height <= point.Y) return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static void ChangeAlgorithm()
+        {
+            CurrentAlgorithm = CurrentAlgorithm switch
+            {
+                AlgorithmType.Bfs => AlgorithmType.Dfs,
+                AlgorithmType.Dfs => AlgorithmType.UniformCostSearch,
+                AlgorithmType.UniformCostSearch => AlgorithmType.Bfs,
+                _ => CurrentAlgorithm
+            };
+        }
+
         public void Clear()
         {
             _gameOverInformation = null;

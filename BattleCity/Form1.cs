@@ -45,6 +45,9 @@ namespace BattleCity
                 case Keys.Escape:
                     Keyboard.Escape = true;
                     break;
+                case Keys.Z:
+                    CurrentLevel.ChangeAlgorithm();
+                    break;
             }
         }
 

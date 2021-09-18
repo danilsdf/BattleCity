@@ -10,6 +10,7 @@ namespace BattleCity.MapItems.TankModule
 {
     public class PlayerTank : ActiveTank, IResponse, IAddTank
     {
+        
         public PlayerTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)
         {
