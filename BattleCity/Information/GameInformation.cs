@@ -9,6 +9,7 @@ namespace BattleCity.Information
     public abstract class GameInformation : IDraw
     {
         protected Image SpriteImage;
+        protected string SpriteText;
         protected Rectangle SpriteRectangle;
 
         protected GameInformation(Rectangle rect)
@@ -20,6 +21,11 @@ namespace BattleCity.Information
         {
             g.TranslateTransform(SpriteRectangle.X + offset.X, SpriteRectangle.Y + offset.Y);
             g.DrawImage(SpriteImage, 0, 0, SpriteRectangle.Width, SpriteRectangle.Height);
+            g.ResetTransform();
+
+            g.TranslateTransform(SpriteRectangle.X + offset.X - 10, SpriteRectangle.Y + offset.Y + 40);
+            if (!string.IsNullOrWhiteSpace(SpriteText))
+                g.DrawString(SpriteText, new Font("Arial", 14), new SolidBrush(Color.Black), 0, 0);
             g.ResetTransform();
         }
 

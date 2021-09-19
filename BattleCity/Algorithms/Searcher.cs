@@ -22,6 +22,13 @@ namespace BattleCity.Algorithms
             return points.Where(CurrentLevel.IsPointEmpty);
         }
 
+        public static IEnumerable<KeyValuePair<int, Point>> GetCostNeighbours(Point cell, int speed)
+        {
+            return GetAccessNeighbours(cell, speed)
+                .Select(point => new KeyValuePair<int, Point>((cell.X + point.Y) / 2, point))
+                .OrderBy(keyValue => keyValue.Key);
+        }
+
         public static IEnumerable<Point> RouteRestore(Point finish)
         {
             var currentPoint = finish;

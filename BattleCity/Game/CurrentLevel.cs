@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,12 +22,12 @@ namespace BattleCity.Game
         private GameOverInformation _gameOverInformation;
 
         public static LevelState LevelState;
+        public static Stopwatch Stopwatch = new Stopwatch();
 
         public static int PlayerHealth;
 
         private CurrentLevelInformation _currentLevelInformation;
         public static Dictionary<MapItemKey, List<BaseItem>> DictionaryObjGame;
-        //public static int[,] GameArray;
         private readonly List<BaseItem> _listTankEnemy ;
         private readonly List<BaseItem> _listPlayer;
         private readonly List<BaseItem> _listWall;
@@ -36,6 +37,7 @@ namespace BattleCity.Game
         private readonly List<BaseItem> _listOther;
 
         public static List<IDraw> ListInformation;
+        public static AlgorithmInformation AlgorithmInformation;
 
         private PlayerTank _player;
         private Eagle _eagle;
@@ -54,7 +56,6 @@ namespace BattleCity.Game
         {
             ListInformation = new List<IDraw>();
             DictionaryObjGame = new Dictionary<MapItemKey, List<BaseItem>>();
-            //GameArray = new int[Constants.Size.SquareCount, Constants.Size.SquareCount];
 
             _listTankEnemy = new List<BaseItem>();
             _listPlayer = new List<BaseItem>();
@@ -66,9 +67,7 @@ namespace BattleCity.Game
 
             _spawnEagle = new Point(12 * Constants.Size.WidthTile, 24 * Constants.Size.HeightTile);
             _spawnPlayer = new Point(8 * Constants.Size.WidthTile, 24 * Constants.Size.HeightTile);
-            //GameArray[12, 24] = 1;
-            //GameArray[8, 24] = 2;
-
+            AlgorithmInformation = new AlgorithmInformation();
 
             DictionaryObjGame.Add(MapItemKey.Ice, _listIce);
             DictionaryObjGame.Add(MapItemKey.TankEnemy, _listTankEnemy);
@@ -112,6 +111,7 @@ namespace BattleCity.Game
 
             ListInformation.Add(new LevelInformation(_currentLevel, new Point(28 * Constants.Size.WidthTile, 23 * Constants.Size.HeightTile)));
             ListInformation.Add(new LivesInformation(3));
+            ListInformation.Add(AlgorithmInformation);
 
             int x = 0, y = 0;
             foreach (var line in linesTileMap)
@@ -122,25 +122,19 @@ namespace BattleCity.Game
                     {
                         case Constants.CharValue.CharBrickWall:
                             _listWall.Add(new BrickWall(new Point(x, y)));
-                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 1;
                             break;
                         case Constants.CharValue.CharConcreteWall:
                             _listWall.Add(new ConcreteWall(new Point(x, y)));
-                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 1;
                             break;
                         case Constants.CharValue.CharWater:
                             _listWater.Add(new Water(new Point(x, y)));
-                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 1;
                             break;
                         case Constants.CharValue.CharForest:
                             _listOther.Add(new Forest(new Point(x, y)));
-                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 0;
                             break;
                         case Constants.CharValue.CharIce:
-                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 0;
                             _listIce.Add(new Ice(new Point(x, y)));
                             break;
-                            //GameArray[x / Constants.Size.WidthTile, y / Constants.Size.HeightTile] = 0;
                     }
                     x += Constants.Size.WidthTile;
                 }
@@ -228,21 +222,50 @@ namespace BattleCity.Game
                 }
                 case LevelState.Game:
                 {
-                    if (CurrentAlgorithm == AlgorithmType.Bfs)
+                    switch (CurrentAlgorithm)
                     {
-                        foreach (var item in _listTankEnemy.Select(enemy => BfsSearcher.GetRoute(_player.Rect.Location,
-                            enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                        case AlgorithmType.Bfs:
                         {
-                            new ColorPoint(item, "RedPoint");
+                            Stopwatch.Restart();
+                            foreach (var item in _listTankEnemy.Select(enemy => BfsSearcher.GetRoute(_player.Rect.Location,
+                                enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                            {
+                                new ColorPoint(item, "RedPoint");
+                            }
+                            Stopwatch.Stop();
+                            AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
+                            break;
                         }
-                    }
-                    else if (CurrentAlgorithm == AlgorithmType.Dfs)
-                    {
-                        foreach (var item in _listTankEnemy.Select(enemy => DfsSearcher.GetRoute(_player.Rect.Location,
-                            enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                        case AlgorithmType.Dfs:
                         {
-                            new ColorPoint(item, "GreenPoint");
+                            Stopwatch.Restart();
+                            foreach (var item in _listTankEnemy.Select(enemy => DfsSearcher.GetRoute(
+                                _player.Rect.Location,
+                                enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                            {
+                                new ColorPoint(item, "GreenPoint");
+                            }
+
+                            Stopwatch.Stop();
+                            AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
+                            break;
                         }
+                        case AlgorithmType.UniformCostSearch:
+                        {
+                            Stopwatch.Restart();
+                            foreach (var item in _listTankEnemy.Select(enemy => UniformCostSearcher.GetRoute(
+                                _player.Rect.Location,
+                                enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                            {
+                                new ColorPoint(item, "YellowPoint");
+                            }
+
+                            Stopwatch.Stop();
+                            AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
+                            break;
+                        }
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
 
                     if (_listTankEnemy.Count < 3)
@@ -277,18 +300,8 @@ namespace BattleCity.Game
                 return false;
             }
 
-            foreach (var mapItemKey in enums)
-            {
-                foreach (var baseItem in DictionaryObjGame[mapItemKey])
-                {
-                    if (point.X == baseItem.Rect.X && point.Y == baseItem.Rect.Y)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
+            return enums.All(mapItemKey => !DictionaryObjGame[mapItemKey]
+                .Any(baseItem => point.X == baseItem.Rect.X && point.Y == baseItem.Rect.Y));
         }
 
         public static void ChangeAlgorithm()
@@ -300,6 +313,7 @@ namespace BattleCity.Game
                 AlgorithmType.UniformCostSearch => AlgorithmType.Bfs,
                 _ => CurrentAlgorithm
             };
+            AlgorithmInformation.Change(CurrentAlgorithm);
         }
 
         public void Clear()
