@@ -13,11 +13,12 @@ namespace BattleCity.Algorithms
 
         public static IEnumerable<Point> GetAccessNeighbours(Point cell, int speed)
         {
-            var topPoint = new Point(cell.X, cell.Y - speed);
+            var topPoint = new Point(cell.X, cell.Y + speed);
             var rightPoint = new Point(cell.X + speed, cell.Y);
-            var bottomPoint = new Point(cell.X, cell.Y + speed);
+            var bottomPoint = new Point(cell.X, cell.Y - speed);
             var leftPoint = new Point(cell.X - speed, cell.Y);
-            var points = new[] { bottomPoint, topPoint, leftPoint, rightPoint };
+            var points = new[] { topPoint, bottomPoint, leftPoint, rightPoint };
+            var t = points.Where(CurrentLevel.IsPointEmpty).ToArray();
             return points.Where(CurrentLevel.IsPointEmpty);
         }
 

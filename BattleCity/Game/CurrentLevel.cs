@@ -170,7 +170,7 @@ namespace BattleCity.Game
 
                     var rect = new Rectangle(_spawnPlayer.X, _spawnPlayer.Y, Constants.Size.HeightTank, Constants.Size.WidthTank);
 
-                    _player = new PlayerTank(rect, 4, Direction.Up, 8);
+                    _player = new PlayerTank(rect, 5, Direction.Up, 8);
                     new TankAppearance(_spawnPlayer, _player);
 
                     _enemyTanks = new SpawnTanks(_tanksFromMap);
@@ -263,9 +263,11 @@ namespace BattleCity.Game
 
         public static bool IsPointEmpty(Point point)
         {
-            var enums = Enum.GetValues(typeof(MapItemKey)).Cast<MapItemKey>().Where(type => type != MapItemKey.Other
-                                                                                       && type != MapItemKey.Player
-                                                                                       && type != MapItemKey.Ice);
+            var enums = Enum.GetValues(typeof(MapItemKey)).Cast<MapItemKey>()
+                .Where(type => type != MapItemKey.Other
+                               && type != MapItemKey.Player
+                               && type != MapItemKey.TankEnemy
+                               && type != MapItemKey.Ice);
 
             if (point.X > Constants.Size.WidthBoard - Constants.Size.WidthTank
                 || point.Y > Constants.Size.HeightBoard - Constants.Size.HeightTank
@@ -279,9 +281,10 @@ namespace BattleCity.Game
             {
                 foreach (var baseItem in DictionaryObjGame[mapItemKey])
                 {
-                    if (baseItem.Rect.X >= point.X && baseItem.Rect.X + baseItem.Rect.Width <= point.X) return false;
-
-                    if (baseItem.Rect.Y >= point.Y && baseItem.Rect.Y + baseItem.Rect.Height <= point.Y) return false;
+                    if (point.X == baseItem.Rect.X && point.Y == baseItem.Rect.Y)
+                    {
+                        return false;
+                    }
                 }
             }
 
