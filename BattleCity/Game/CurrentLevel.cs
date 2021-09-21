@@ -31,6 +31,7 @@ namespace BattleCity.Game
         private readonly List<BaseItem> _listTankEnemy ;
         private readonly List<BaseItem> _listPlayer;
         private readonly List<BaseItem> _listWall;
+        private readonly List<BaseItem> _listRandomWall;
         private readonly List<BaseItem> _listWater;
         private readonly List<BaseItem> _listShell;
         private readonly List<BaseItem> _listIce;
@@ -46,8 +47,9 @@ namespace BattleCity.Game
         private readonly Point _spawnPlayer;
 
         private int _timerWin;
+        private int _timerSpawnWall = Constants.Timer.CreateRandomWall;
 
-        private static AlgorithmType CurrentAlgorithm = AlgorithmType.Bfs;
+        private static AlgorithmType _currentAlgorithm = AlgorithmType.Bfs;
 
         private SpawnTanks _enemyTanks;
         private string _tanksFromMap;
@@ -60,6 +62,7 @@ namespace BattleCity.Game
             _listTankEnemy = new List<BaseItem>();
             _listPlayer = new List<BaseItem>();
             _listWall = new List<BaseItem>();
+            _listRandomWall = new List<BaseItem>();
             _listShell = new List<BaseItem>();
             _listWater = new List<BaseItem>();
             _listIce = new List<BaseItem>();
@@ -73,6 +76,7 @@ namespace BattleCity.Game
             DictionaryObjGame.Add(MapItemKey.TankEnemy, _listTankEnemy);
             DictionaryObjGame.Add(MapItemKey.Player, _listPlayer);
             DictionaryObjGame.Add(MapItemKey.Wall, _listWall);
+            DictionaryObjGame.Add(MapItemKey.RandomWall, _listRandomWall);
             DictionaryObjGame.Add(MapItemKey.Water, _listWater);
             DictionaryObjGame.Add(MapItemKey.Shell, _listShell);
             DictionaryObjGame.Add(MapItemKey.Other, _listOther);
@@ -185,6 +189,10 @@ namespace BattleCity.Game
             {
                 _listOther[i].Update();
             }
+            for (var i = 0; i < _listRandomWall.Count; i++)
+            {
+                _listRandomWall[i].Update();
+            }
             foreach (var item in _listWater)
             {
                 item.Update();
@@ -222,7 +230,43 @@ namespace BattleCity.Game
                 }
                 case LevelState.Game:
                 {
-                    switch (CurrentAlgorithm)
+                    if (_timerSpawnWall == 0)
+                    {
+                        _timerSpawnWall = Constants.Timer.CreateRandomWall;
+                        var rnd = new Random();
+                        var x = rnd.Next(0, 400);
+                        var y = rnd.Next(0, 400);
+                        //while (true)
+                        //{
+                        //    while (x % 40 != 0)
+                        //    {
+                        //        x = rnd.Next(0, 400);
+                        //    }
+
+                        //    while (y % 40 != 0)
+                        //    {
+                        //        y = rnd.Next(0, 400);
+                        //    }
+                        //    if (IsPointIsFreeToBuild(new Point(x, y))) break;
+                        //}
+
+                        while (x % 40 != 0)
+                        {
+                            x = rnd.Next(0, 400);
+                        }
+
+                        while (y % 40 != 0)
+                        {
+                            y = rnd.Next(0, 400);
+                        }
+
+                        new RandomBrickWall(new Point(x, y));
+                        new RandomBrickWall(new Point(x + 20, y));
+                        new RandomBrickWall(new Point(x, y + 20));
+                        new RandomBrickWall(new Point(x + 20, y + 20));
+                    }
+                    else _timerSpawnWall--;
+                        switch (_currentAlgorithm)
                     {
                         case AlgorithmType.Bfs:
                         {
@@ -304,16 +348,32 @@ namespace BattleCity.Game
                 .Any(baseItem => point.X == baseItem.Rect.X && point.Y == baseItem.Rect.Y));
         }
 
+        public static bool IsPointIsFreeToBuild(Point point)
+        {
+            var enums = Enum.GetValues(typeof(MapItemKey)).Cast<MapItemKey>();
+
+            if (point.X > Constants.Size.WidthBoard - Constants.Size.WidthTank
+                || point.Y > Constants.Size.HeightBoard - Constants.Size.HeightTank
+                || point.X < 0
+                || point.Y < 0)
+            {
+                return false;
+            }
+
+            return enums.All(mapItemKey => !DictionaryObjGame[mapItemKey]
+                .Any(baseItem => point.X == baseItem.Rect.X && point.Y == baseItem.Rect.Y));
+        }
+
         public static void ChangeAlgorithm()
         {
-            CurrentAlgorithm = CurrentAlgorithm switch
+            _currentAlgorithm = _currentAlgorithm switch
             {
                 AlgorithmType.Bfs => AlgorithmType.Dfs,
                 AlgorithmType.Dfs => AlgorithmType.UniformCostSearch,
                 AlgorithmType.UniformCostSearch => AlgorithmType.Bfs,
-                _ => CurrentAlgorithm
+                _ => _currentAlgorithm
             };
-            AlgorithmInformation.Change(CurrentAlgorithm);
+            AlgorithmInformation.Change(_currentAlgorithm);
         }
 
         public void Clear()

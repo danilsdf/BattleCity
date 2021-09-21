@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using BattleCity.Enums;
 using BattleCity.Game;
@@ -19,13 +20,13 @@ namespace BattleCity.MapItems.StaticItems
 
             SpriteRectangle.Size = SpriteImage.Size;
 
-            CurrentLevel.DictionaryObjGame[MapItemKey.Wall].Add(this);
-            _timeToRemove = Constants.Timer.RemovePointsTimeout;
+            CurrentLevel.DictionaryObjGame[MapItemKey.RandomWall].Add(this);
+            _timeToRemove = Constants.Timer.RemoveRandomWall;
         }
 
         public override void Update()
         {
-            if (_timeToRemove == 0) CurrentLevel.DictionaryObjGame[MapItemKey.Other].Remove(this);
+            if (_timeToRemove == 0) CurrentLevel.DictionaryObjGame[MapItemKey.RandomWall].Remove(this);
             else _timeToRemove--;
         }
 
@@ -33,14 +34,14 @@ namespace BattleCity.MapItems.StaticItems
         {
             shell.Detonation = true;
 
-            CurrentLevel.DictionaryObjGame[MapItemKey.Wall].Remove(this);
+            CurrentLevel.DictionaryObjGame[MapItemKey.RandomWall].Remove(this);
 
             var next = CurrentLevel.DictionaryObjGame[MapItemKey.Wall]
                 .FirstOrDefault(gameObj => gameObj.Rect.Location.X == Rect.X + 20 && gameObj.Rect.Location.Y == Rect.Y);
 
             if (next != default)
             {
-                CurrentLevel.DictionaryObjGame[MapItemKey.Wall].Remove(next);
+                CurrentLevel.DictionaryObjGame[MapItemKey.RandomWall].Remove(next);
             }
         }
     }

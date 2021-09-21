@@ -35,6 +35,10 @@
 
             public const int RemovePathTimeout = 2;
 
+            public const int RemoveRandomWall = 100;
+
+            public const int CreateRandomWall = 50;
+
             public const int GameOverTimeout = 200;
 
         }
