@@ -51,7 +51,7 @@ namespace BattleCity.MapItems.TankModule.Enemy.Base
             if (_fireDirection == 0)
             {
                 _fireDirection = random.Next(0, 100);
-                //Fire(MapItemKey.TankEnemy);
+                Fire(MapItemKey.TankEnemy);
             }
             else _fireDirection--;
         }
