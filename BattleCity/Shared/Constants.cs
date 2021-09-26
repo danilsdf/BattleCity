@@ -74,6 +74,8 @@
             public static string LevelMaps = @"..\..\..\Content\LevelMaps\";
 
         }
+        public static int[] XPoints = new[] { 0, 80, 160, 240, 320, 380 };
+
 
         public const int CountLevel = 35;
 

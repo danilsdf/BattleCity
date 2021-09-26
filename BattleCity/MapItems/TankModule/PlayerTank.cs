@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using BattleCity.Algorithms;
 using BattleCity.Enums;
@@ -13,7 +14,7 @@ namespace BattleCity.MapItems.TankModule
 {
     public class PlayerTank : ActiveTank, IResponse, IAddTank
     {
-        public Point PointToMove= new Point(0,0);
+        public Point PointToMove = new Point(0,0);
         public PlayerTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)
         {
@@ -68,13 +69,24 @@ namespace BattleCity.MapItems.TankModule
             var myPoint = Rect.Location;
             if (myPoint.Equals(PointToMove))
             {
-                PointToMove = new Point(400, 400);
+                var rnd = new Random();
+                var x = 40;
+                var y = 40;
+                while (!CurrentLevel.IsPointEmpty(new Point(x, y)))
+                {
+                    x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
+
+                    y = rnd.Next(0, 20) * 20;
+                    if (x == 40 && y == 40) x = y = 0;
+                }
+
+                PointToMove = new Point(x, y);
             }
             new ColorPoint(PointToMove, "RedPoint");
             IsParked = false;
             OldDirection = Direction;
             var point = PointToMove;
-            var path = BfsSearcher.GetRoute(myPoint, PointToMove);
+            var path = AStarSearcher.GetRoute(myPoint, PointToMove);
             if (path != null) LastPath = path.ToList();
 
             if (LastPath != null && LastPath.Any())

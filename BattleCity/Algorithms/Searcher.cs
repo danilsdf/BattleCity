@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using BattleCity.Game;
@@ -26,8 +27,22 @@ namespace BattleCity.Algorithms
         public static IEnumerable<KeyValuePair<int, Point>> GetCostNeighbours(Point cell, int speed)
         {
             return GetAccessNeighbours(cell, speed)
-                .Select(point => new KeyValuePair<int, Point>((cell.X + point.Y) / 2, point))
+                .Select(point =>
+                    new KeyValuePair<int, Point>((cell.X + point.Y) / 2, point))
                 .OrderBy(keyValue => keyValue.Key);
+        }
+
+        public static IEnumerable<KeyValuePair<int, Point>> GetAStarCostNeighbours(Point cell, int speed)
+        {
+            return GetAccessNeighbours(cell, speed)
+                .Select(point =>
+                    new KeyValuePair<int, Point>(((cell.X + point.Y) / 2) + GetHeuristicPathLength(cell, point), point))
+                .OrderBy(keyValue => keyValue.Key);
+        }
+
+        private static int GetHeuristicPathLength(Point from, Point to)
+        {
+            return Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y);
         }
 
         public static IEnumerable<Point> RouteRestore(Point finish)

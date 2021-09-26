@@ -233,17 +233,14 @@ namespace BattleCity.Game
                     {
                         _timerSpawnWall = Constants.Timer.CreateRandomWall;
                         var rnd = new Random();
-                        var x = rnd.Next(0, 400);
-                        var y = rnd.Next(0, 400);
+                        var x = 40;
+                        var y = 40;
 
-                        while (x % 40 != 0)
+                        while (!IsPointIsFreeToBuild(new Point(x, y)))
                         {
-                            x = rnd.Next(0, 400);
-                        }
+                            x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
 
-                        while (y % 40 != 0)
-                        {
-                            y = rnd.Next(0, 400);
+                            y = rnd.Next(0, 40) * 10;
                         }
 
                         new RandomBrickWall(new Point(x, y));
@@ -253,61 +250,61 @@ namespace BattleCity.Game
                     }
                     else _timerSpawnWall--;
 
-                        #region Algorithm for Laba-1
+                    #region Algorithm for Laba-1
 
-                        //switch (_currentAlgorithm)
-                        //    {
-                        //        case AlgorithmType.Bfs:
-                        //            {
-                        //                Stopwatch.Restart();
-                        //                foreach (var item in _listTankEnemy.Select(enemy => BfsSearcher.GetRoute(
-                        //                    Player.Rect.Location,
-                        //                    enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
-                        //                {
-                        //                    new ColorPoint(item, "RedPoint");
-                        //                }
+                    //switch (_currentAlgorithm)
+                    //    {
+                    //        case AlgorithmType.Bfs:
+                    //            {
+                    //                Stopwatch.Restart();
+                    //                foreach (var item in _listTankEnemy.Select(enemy => BfsSearcher.GetRoute(
+                    //                    Player.Rect.Location,
+                    //                    enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                    //                {
+                    //                    new ColorPoint(item, "RedPoint");
+                    //                }
 
-                        //                Stopwatch.Stop();
-                        //                AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
-                        //                break;
-                        //            }
-                        //        case AlgorithmType.Dfs:
-                        //            {
-                        //                Stopwatch.Restart();
-                        //                foreach (var item in _listTankEnemy.Select(enemy => DfsSearcher.GetRoute(
-                        //                    Player.Rect.Location,
-                        //                    enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
-                        //                {
-                        //                    new ColorPoint(item, "GreenPoint");
-                        //                }
+                    //                Stopwatch.Stop();
+                    //                AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
+                    //                break;
+                    //            }
+                    //        case AlgorithmType.Dfs:
+                    //            {
+                    //                Stopwatch.Restart();
+                    //                foreach (var item in _listTankEnemy.Select(enemy => DfsSearcher.GetRoute(
+                    //                    Player.Rect.Location,
+                    //                    enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                    //                {
+                    //                    new ColorPoint(item, "GreenPoint");
+                    //                }
 
-                        //                Stopwatch.Stop();
-                        //                AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
-                        //                break;
-                        //            }
-                        //        case AlgorithmType.UniformCostSearch:
-                        //            {
-                        //                Stopwatch.Restart();
-                        //                foreach (var item in _listTankEnemy.Select(enemy => UniformCostSearcher.GetRoute(
-                        //                    Player.Rect.Location,
-                        //                    enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
-                        //                {
-                        //                    new ColorPoint(item, "YellowPoint");
-                        //                }
+                    //                Stopwatch.Stop();
+                    //                AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
+                    //                break;
+                    //            }
+                    //        case AlgorithmType.UniformCostSearch:
+                    //            {
+                    //                Stopwatch.Restart();
+                    //                foreach (var item in _listTankEnemy.Select(enemy => UniformCostSearcher.GetRoute(
+                    //                    Player.Rect.Location,
+                    //                    enemy.Rect.Location)).Where(path => path != null).SelectMany(path => path))
+                    //                {
+                    //                    new ColorPoint(item, "YellowPoint");
+                    //                }
 
-                        //                Stopwatch.Stop();
-                        //                AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
-                        //                break;
-                        //            }
-                        //        default:
-                        //            throw new ArgumentOutOfRangeException();
-                        //    }
+                    //                Stopwatch.Stop();
+                    //                AlgorithmInformation.ChangeTime(Stopwatch.ElapsedMilliseconds);
+                    //                break;
+                    //            }
+                    //        default:
+                    //            throw new ArgumentOutOfRangeException();
+                    //    }
 
-                        #endregion
+                    #endregion
 
-                        if (_listTankEnemy.Count < 3)
+                    if (_listTankEnemy.Count < 3)
                     {
-                        //_enemyTanks.AddEnemy();
+                        _enemyTanks.AddEnemy();
                     }
 
                     break;
@@ -336,8 +333,16 @@ namespace BattleCity.Game
                 return false;
             }
 
-            return enums.All(mapItemKey => !DictionaryObjGame[mapItemKey]
-                .Any(baseItem => point.X == baseItem.Rect.X && point.Y == baseItem.Rect.Y));
+            foreach (var mapItemKey in enums)
+            {
+                foreach (var baseItem in DictionaryObjGame[mapItemKey])
+                {
+                    if ((point.X == baseItem.Rect.X || point.X + 20 == baseItem.Rect.X)
+                        && (point.Y == baseItem.Rect.Y || point.Y + 20 == baseItem.Rect.Y)) return false;
+                }
+            }
+
+            return true;
         }
 
         public static bool IsPointIsFreeToBuild(Point point)
@@ -359,7 +364,7 @@ namespace BattleCity.Game
         public static bool IsFire(Point point)
         {
             return DictionaryObjGame[MapItemKey.TankEnemy]
-                .Any(enemy => enemy.Rect.X == point.X || enemy.Rect.Y == point.Y);
+                .Any(enemy => enemy.Rect.X > point.X -5 && enemy.Rect.X < point.X + 5 || enemy.Rect.Y > point.Y - 5 && enemy.Rect.Y < point.Y + 5);
         }
 
         public static void ChangeAlgorithm()
