@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using BattleCity.Algorithms.Model;
+using BattleCity.Shared;
 
 namespace BattleCity.Algorithms
 {
@@ -17,7 +18,7 @@ namespace BattleCity.Algorithms
             while (!fringe.IsEmpty)
             {
                 var currentCell = fringe.Dequeue();
-                foreach (var neighbour in GetCostNeighbours(currentCell.Value, 40))
+                foreach (var neighbour in GetCostNeighbours(currentCell.Value, Constants.Speed))
                 {
                     if (Visited.Contains(neighbour.Value)) continue;
                     if (!fringe.Contains(neighbour.Value))

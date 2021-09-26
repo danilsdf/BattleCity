@@ -1,8 +1,11 @@
 ﻿using System.Drawing;
+using System.Linq;
+using BattleCity.Algorithms;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
 using BattleCity.MapItems.ShellModule;
+using BattleCity.MapItems.StaticItems;
 using BattleCity.Shared;
 using BattleCity.SoundPart;
 
@@ -10,7 +13,7 @@ namespace BattleCity.MapItems.TankModule
 {
     public class PlayerTank : ActiveTank, IResponse, IAddTank
     {
-        
+        public Point PointToMove= new Point(0,0);
         public PlayerTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)
         {
@@ -43,10 +46,10 @@ namespace BattleCity.MapItems.TankModule
                 CurrentLevel.PlayerHealth--;
                 return;
             }
-            CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
+            //CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
             shell.Detonation = true;
 
-            CurrentLevel.LevelState = LevelState.GameOver;//todo
+            //CurrentLevel.LevelState = LevelState.GameOver;//todo
             new DetonationShellBig(shell.Rect.Location, shell.Direction, 0);
             SoundService.Stop();
         }
@@ -62,35 +65,62 @@ namespace BattleCity.MapItems.TankModule
 
         protected void Moving()
         {
+            var myPoint = Rect.Location;
+            if (myPoint.Equals(PointToMove))
+            {
+                PointToMove = new Point(400, 400);
+            }
+            new ColorPoint(PointToMove, "RedPoint");
+            IsParked = false;
             OldDirection = Direction;
+            var point = PointToMove;
+            var path = BfsSearcher.GetRoute(myPoint, PointToMove);
+            if (path != null) LastPath = path.ToList();
+
+            if (LastPath != null && LastPath.Any())
+            {
+                point = LastPath.Last();
+                LastPath.RemoveAt(0);
+                while (point.Equals(myPoint) && LastPath.Any())
+                {
+                    point = LastPath.Last();
+                    LastPath.RemoveAt(0);
+                }
+                if (point.Equals(myPoint)) point = PointToMove;
+            }
+
+            //todo check shell in direction to an eagle
+
+
+            if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y + 20))) NewDirection = Direction.Down;
+             else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y - 20))) NewDirection = Direction.Up;
+             else if(point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X + 20, myPoint.Y))) NewDirection = Direction.Right;
+             else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X - 20, myPoint.Y))) NewDirection = Direction.Left;
+
+            if (CurrentLevel.IsFire(point)) Fire(MapItemKey.Player);
 
             if (Keyboard.Left)
             {
                 NewDirection = Direction.Left;
-                IsParked = false;
                 Move();
             }
             else if (Keyboard.Right)
             {
                 NewDirection = Direction.Right;
-                IsParked = false;
                 Move();
             }
             else if (Keyboard.Up)
             {
                 NewDirection = Direction.Up;
-                IsParked = false;
                 Move();
             }
             else if (Keyboard.Down)
             {
                 NewDirection = Direction.Down;
-                IsParked = false;
                 Move();
             }
             else
             {
-                IsParked = true;
                 Move();
             }
 

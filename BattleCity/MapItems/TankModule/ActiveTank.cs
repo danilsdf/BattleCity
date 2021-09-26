@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using BattleCity.Enums;
 
@@ -6,6 +7,7 @@ namespace BattleCity.MapItems.TankModule
 {
     public abstract class ActiveTank : FireTank
     {
+        protected List<Point> LastPath;
         protected string Name;
         protected ActiveTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)

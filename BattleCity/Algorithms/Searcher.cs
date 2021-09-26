@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using BattleCity.Game;
+using BattleCity.MapItems.StaticItems;
 
 namespace BattleCity.Algorithms
 {
@@ -18,7 +19,7 @@ namespace BattleCity.Algorithms
             var bottomPoint = new Point(cell.X, cell.Y - speed);
             var leftPoint = new Point(cell.X - speed, cell.Y);
             var points = new[] { topPoint, bottomPoint, leftPoint, rightPoint };
-            var t = points.Where(CurrentLevel.IsPointEmpty).ToArray();
+
             return points.Where(CurrentLevel.IsPointEmpty);
         }
 
@@ -35,7 +36,24 @@ namespace BattleCity.Algorithms
             yield return currentPoint;
             while (Track[currentPoint] != default)
             {
+                new ColorPoint(Track[currentPoint], "YellowPoint");
                 yield return Track[currentPoint];
+                currentPoint = Track[currentPoint];
+            }
+        }
+
+        public static IEnumerable<Point> RouteRestore(Point start, Point finish)
+        {
+            var currentPoint = finish;
+            yield return currentPoint;
+            while (Track[currentPoint] != default)
+            {
+                if (!Track[currentPoint].Equals(start))
+                {
+                    new ColorPoint(Track[currentPoint], "YellowPoint");
+                    yield return Track[currentPoint];
+                }
+
                 currentPoint = Track[currentPoint];
             }
         }
