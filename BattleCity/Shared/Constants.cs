@@ -79,6 +79,8 @@
 
         public const int CountLevel = 35;
 
+        public const int HitCount = 10;
+
         public const int Speed = 40;
     }
 }

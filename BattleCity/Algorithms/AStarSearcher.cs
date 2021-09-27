@@ -33,7 +33,7 @@ namespace BattleCity.Algorithms
 
                     if (neighbour.Value.Equals(finish))
                     {
-                        return RouteRestore(finish);
+                        return RouteRestore(start, finish);
                     }
                 }
             }

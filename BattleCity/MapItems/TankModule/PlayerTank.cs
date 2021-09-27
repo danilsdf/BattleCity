@@ -14,10 +14,13 @@ namespace BattleCity.MapItems.TankModule
 {
     public class PlayerTank : ActiveTank, IResponse, IAddTank
     {
+        private int _numberOfHits;
         public Point PointToMove = new Point(0,0);
         public PlayerTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)
         {
+
+            _numberOfHits = 0;
             Name = "SmallTankPlayer";
             SpriteImage = GetImage($"{Name}Down1");
         }
@@ -42,17 +45,17 @@ namespace BattleCity.MapItems.TankModule
         public void Response(Shell shell)
         {
             if (shell.TankOwner != MapItemKey.TankEnemy) return;
-            if (CurrentLevel.PlayerHealth != 0)
+            if (_numberOfHits == Constants.HitCount)
             {
-                CurrentLevel.PlayerHealth--;
-                return;
+                CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
+                shell.Detonation = true;
+                CurrentLevel.LevelState = LevelState.GameOver; //todo
+                SoundService.Stop();
             }
-            //CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
-            shell.Detonation = true;
+            else _numberOfHits++;
 
-            //CurrentLevel.LevelState = LevelState.GameOver;//todo
+            shell.Detonation = true;
             new DetonationShellBig(shell.Rect.Location, shell.Direction, 0);
-            SoundService.Stop();
         }
 
         public override void Update()
@@ -67,21 +70,7 @@ namespace BattleCity.MapItems.TankModule
         protected void Moving()
         {
             var myPoint = Rect.Location;
-            if (myPoint.Equals(PointToMove))
-            {
-                var rnd = new Random();
-                var x = 40;
-                var y = 40;
-                while (!CurrentLevel.IsPointEmpty(new Point(x, y)))
-                {
-                    x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
-
-                    y = rnd.Next(0, 20) * 20;
-                    if (x == 40 && y == 40) x = y = 0;
-                }
-
-                PointToMove = new Point(x, y);
-            }
+            if (myPoint.Equals(PointToMove)) GenerateNewPoint();
             new ColorPoint(PointToMove, "RedPoint");
             IsParked = false;
             OldDirection = Direction;
@@ -140,6 +129,22 @@ namespace BattleCity.MapItems.TankModule
             {
                 Fire(MapItemKey.Player);
             }
+        }
+
+        private void GenerateNewPoint()
+        {
+            var rnd = new Random();
+            var x = 40;
+            var y = 40;
+            while (!CurrentLevel.IsPointEmpty(new Point(x, y)))
+            {
+                x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
+
+                y = rnd.Next(0, 20) * 20;
+                if (x == 40 && y == 40) x = y = 0;
+            }
+
+            PointToMove = new Point(x, y);
         }
     }
 }
