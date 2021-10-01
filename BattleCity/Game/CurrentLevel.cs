@@ -364,7 +364,8 @@ namespace BattleCity.Game
         public static bool IsFire(Point point)
         {
             return DictionaryObjGame[MapItemKey.TankEnemy]
-                .Any(enemy => enemy.Rect.X > point.X -5 && enemy.Rect.X < point.X + 5 || enemy.Rect.Y > point.Y - 5 && enemy.Rect.Y < point.Y + 5);
+                .Any(enemy => enemy.Rect.X > point.X - 20 && enemy.Rect.X < point.X + 60 
+                              || enemy.Rect.Y > point.Y - 20 && enemy.Rect.Y < point.Y + 60);
         }
 
         public static void ChangeAlgorithm()

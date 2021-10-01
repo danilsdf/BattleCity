@@ -10,6 +10,7 @@ namespace BattleCity.MapItems.TankModule
     {
         protected int ShellSpeed;
         protected Shell Shell;
+        protected int Cooldown;
 
         protected FireTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction)
@@ -19,8 +20,8 @@ namespace BattleCity.MapItems.TankModule
 
         protected void Fire(MapItemKey tankOwner)
         {
-            if (Shell != null && Shell.IsAlive) return;
-
+            //if (Shell != null && Shell.IsAlive) return;
+            
             if (tankOwner == MapItemKey.Player)
             {
                 SoundService.SoundFire();

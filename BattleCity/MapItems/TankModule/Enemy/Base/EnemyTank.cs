@@ -6,6 +6,7 @@ using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
 using BattleCity.MapItems.ShellModule;
+using BattleCity.Shared;
 
 namespace BattleCity.MapItems.TankModule.Enemy.Base
 {
@@ -23,6 +24,7 @@ namespace BattleCity.MapItems.TankModule.Enemy.Base
             IsParked = false;
             _points = points;
 
+            Cooldown = Constants.EnemyCoolDown;
         }
 
         public void AddTank()
@@ -59,44 +61,22 @@ namespace BattleCity.MapItems.TankModule.Enemy.Base
                 if (point.Equals(myPoint)) point = playerPoint;
             }
 
-            if (point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(point.X + 40, point.Y))) NewDirection = Direction.Right;
-            else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(point.X - 40, point.Y))) NewDirection = Direction.Left;
-            else if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(point.X, point.Y + 40))) NewDirection = Direction.Down;
-            else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(point.X, point.Y - 40))) NewDirection = Direction.Up;
+            if (point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(point.X + Constants.DifPoint, point.Y))) NewDirection = Direction.Right;
+            else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(point.X - Constants.DifPoint, point.Y))) NewDirection = Direction.Left;
+            else if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(point.X, point.Y + Constants.DifPoint))) NewDirection = Direction.Down;
+            else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(point.X, point.Y - Constants.DifPoint))) NewDirection = Direction.Up;
             Move();
 
-            //if (playerPoint.X >= point.X - 20 && playerPoint.X <= point.X + 20
-            //    || playerPoint.Y >= point.Y - 20 && playerPoint.Y <= point.Y + 20)
-            //{
-            //    Fire(MapItemKey.TankEnemy);
-            //}
-            if (playerPoint.X == point.X || playerPoint.Y == point.Y)
+            if (playerPoint.X != point.X && playerPoint.Y != point.Y) return;
+            if (Cooldown != 0)
             {
-                Fire(MapItemKey.TankEnemy);
+                Cooldown--;
+                return;
             }
+
+            Cooldown = Constants.EnemyCoolDown;
+            Fire(MapItemKey.TankEnemy);
         }
-
-        //protected void Moving()
-        //{
-        //    var random = new Random();
-        //    OldDirection = Direction;
-        //    if (_rndDirection == 0)
-        //    {
-        //        _rndDirection = random.Next(6, 50);
-        //        NewDirection = (Direction)random.Next(0, 4);
-        //    }
-        //    else _rndDirection--;
-
-        //    Move();
-
-        //    if (_fireDirection == 0)
-        //    {
-        //        _fireDirection = random.Next(0, 100);
-        //        //Fire(MapItemKey.TankEnemy);
-        //    }
-        //    else _fireDirection--;
-        //}
-
         public virtual void Response(Shell shell)
         {
             if (shell.TankOwner == MapItemKey.TankEnemy) return;

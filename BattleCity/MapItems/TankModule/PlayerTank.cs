@@ -19,10 +19,11 @@ namespace BattleCity.MapItems.TankModule
         public PlayerTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)
         {
-
             _numberOfHits = 0;
             Name = "SmallTankPlayer";
             SpriteImage = GetImage($"{Name}Down1");
+
+            Cooldown = Constants.PlayerCoolDown;
         }
 
         protected void PlaySound()
@@ -93,12 +94,20 @@ namespace BattleCity.MapItems.TankModule
             //todo check shell in direction to an eagle
 
 
-            if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y + 20))) NewDirection = Direction.Down;
-             else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y - 20))) NewDirection = Direction.Up;
-             else if(point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X + 20, myPoint.Y))) NewDirection = Direction.Right;
-             else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X - 20, myPoint.Y))) NewDirection = Direction.Left;
+            if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y + Constants.DifPoint))) NewDirection = Direction.Down;
+             else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y - Constants.DifPoint))) NewDirection = Direction.Up;
+             else if(point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X + Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Right;
+             else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X - Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Left;
 
-            if (CurrentLevel.IsFire(point)) Fire(MapItemKey.Player);
+            if (Cooldown != 0)
+            {
+                Cooldown--;
+            }
+            else if (CurrentLevel.IsFire(point))
+            {
+                Cooldown = Constants.EnemyCoolDown;
+                Fire(MapItemKey.Player);
+            }
 
             if (Keyboard.Left)
             {
@@ -140,8 +149,8 @@ namespace BattleCity.MapItems.TankModule
             {
                 x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
 
-                y = rnd.Next(0, 20) * 20;
-                if (x == 40 && y == 40) x = y = 0;
+                y = rnd.Next(0, 10) * 40;
+                if (x == 40 && y == 40) x = y = 80;
             }
 
             PointToMove = new Point(x, y);
