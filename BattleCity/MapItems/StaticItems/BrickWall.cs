@@ -28,6 +28,16 @@ namespace BattleCity.MapItems.StaticItems
             {
                 CurrentLevel.DictionaryObjGame[MapItemKey.Wall].Remove(next);
             }
+            else
+            {
+                var previous = CurrentLevel.DictionaryObjGame[MapItemKey.Wall]
+                    .FirstOrDefault(gameObj => gameObj.Rect.Location.X == Rect.X - 20 && gameObj.Rect.Location.Y == Rect.Y);
+
+                if (previous != default)
+                {
+                    CurrentLevel.DictionaryObjGame[MapItemKey.Wall].Remove(previous);
+                }
+            }
         }
     }
 }

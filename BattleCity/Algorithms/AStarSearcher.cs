@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using BattleCity.Algorithms.Model;
 using BattleCity.Shared;
 
 namespace BattleCity.Algorithms
 {
-    internal class UniformCostSearcher : Searcher
+    public class AStarSearcher : Searcher
     {
         public static IEnumerable<Point> GetRoute(Point start, Point finish)
         {
@@ -17,8 +18,8 @@ namespace BattleCity.Algorithms
             Visited.Add(start);
             while (!fringe.IsEmpty)
             {
-                var currentCell = fringe.Dequeue();
-                foreach (var neighbour in GetCostNeighbours(currentCell.Value, Constants.Speed))
+                var (_, value) = fringe.Dequeue();
+                foreach (var neighbour in GetAStarCostNeighbours(value, Constants.Speed))
                 {
                     if (Visited.Contains(neighbour.Value)) continue;
                     if (!fringe.Contains(neighbour.Value))
@@ -27,12 +28,12 @@ namespace BattleCity.Algorithms
                         fringe.Enqueue(neighbour);
 
                         if (!Track.ContainsKey(neighbour.Value))
-                            Track.Add(neighbour.Value, currentCell.Value);
+                            Track.Add(neighbour.Value, value);
                     }
 
                     if (neighbour.Value.Equals(finish))
                     {
-                        return RouteRestore(finish);
+                        return RouteRestore(start, finish);
                     }
                 }
             }

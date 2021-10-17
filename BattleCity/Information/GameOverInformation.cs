@@ -11,7 +11,7 @@ namespace BattleCity.Information
         private bool _isShow;
         private int _intervalGameOver;
         public GameOverInformation()
-            : base(new Rectangle(Constants.Size.HeightTile * 11, Constants.Size.WindowClientHeight, Constants.Size.WidthTile * 4, Constants.Size.WindowClientWidth * 2))
+            : base(new Rectangle(Constants.Size.HeightTile * 11, Constants.Size.WindowClientHeight, Constants.Size.WidthTile * 4, Constants.Size.HeightTile * 2))
         {
             _isShow = true;
             _intervalGameOver = Constants.Timer.GameOverTimeout;

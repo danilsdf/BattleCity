@@ -1,8 +1,12 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using BattleCity.Algorithms;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
 using BattleCity.MapItems.ShellModule;
+using BattleCity.MapItems.StaticItems;
 using BattleCity.Shared;
 using BattleCity.SoundPart;
 
@@ -10,12 +14,16 @@ namespace BattleCity.MapItems.TankModule
 {
     public class PlayerTank : ActiveTank, IResponse, IAddTank
     {
-        
+        private int _numberOfHits;
+        public Point PointToMove = new Point(0,0);
         public PlayerTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)
         {
+            _numberOfHits = 0;
             Name = "SmallTankPlayer";
             SpriteImage = GetImage($"{Name}Down1");
+
+            Cooldown = Constants.PlayerCoolDown;
         }
 
         protected void PlaySound()
@@ -38,17 +46,17 @@ namespace BattleCity.MapItems.TankModule
         public void Response(Shell shell)
         {
             if (shell.TankOwner != MapItemKey.TankEnemy) return;
-            if (CurrentLevel.PlayerHealth != 0)
+            if (_numberOfHits == Constants.HitCount)
             {
-                CurrentLevel.PlayerHealth--;
-                return;
+                CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
+                shell.Detonation = true;
+                CurrentLevel.LevelState = LevelState.GameOver; //todo
+                SoundService.Stop();
             }
-            CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
-            shell.Detonation = true;
+            else _numberOfHits++;
 
-            CurrentLevel.LevelState = LevelState.GameOver;//todo
+            shell.Detonation = true;
             new DetonationShellBig(shell.Rect.Location, shell.Direction, 0);
-            SoundService.Stop();
         }
 
         public override void Update()
@@ -62,35 +70,67 @@ namespace BattleCity.MapItems.TankModule
 
         protected void Moving()
         {
+            var myPoint = Rect.Location;
+            if (myPoint.Equals(PointToMove)) GenerateNewPoint();
+            new ColorPoint(PointToMove, "RedPoint");
+            IsParked = false;
             OldDirection = Direction;
+            var point = PointToMove;
+            var path = AStarSearcher.GetRoute(myPoint, PointToMove);
+            if (path != null) LastPath = path.ToList();
+
+            if (LastPath != null && LastPath.Any())
+            {
+                point = LastPath.Last();
+                LastPath.RemoveAt(0);
+                while (point.Equals(myPoint) && LastPath.Any())
+                {
+                    point = LastPath.Last();
+                    LastPath.RemoveAt(0);
+                }
+                if (point.Equals(myPoint)) point = PointToMove;
+            }
+
+            //todo check shell in direction to an eagle
+
+
+            if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y + Constants.DifPoint))) NewDirection = Direction.Down;
+             else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y - Constants.DifPoint))) NewDirection = Direction.Up;
+             else if(point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X + Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Right;
+             else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X - Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Left;
+
+            if (Cooldown != 0)
+            {
+                Cooldown--;
+            }
+            else if (CurrentLevel.IsFire(point))
+            {
+                Cooldown = Constants.EnemyCoolDown;
+                Fire(MapItemKey.Player);
+            }
 
             if (Keyboard.Left)
             {
                 NewDirection = Direction.Left;
-                IsParked = false;
                 Move();
             }
             else if (Keyboard.Right)
             {
                 NewDirection = Direction.Right;
-                IsParked = false;
                 Move();
             }
             else if (Keyboard.Up)
             {
                 NewDirection = Direction.Up;
-                IsParked = false;
                 Move();
             }
             else if (Keyboard.Down)
             {
                 NewDirection = Direction.Down;
-                IsParked = false;
                 Move();
             }
             else
             {
-                IsParked = true;
                 Move();
             }
 
@@ -98,6 +138,22 @@ namespace BattleCity.MapItems.TankModule
             {
                 Fire(MapItemKey.Player);
             }
+        }
+
+        private void GenerateNewPoint()
+        {
+            var rnd = new Random();
+            var x = 40;
+            var y = 40;
+            while (!CurrentLevel.IsPointEmpty(new Point(x, y)))
+            {
+                x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
+
+                y = rnd.Next(0, 10) * 40;
+                if (x == 40 && y == 40) x = y = 80;
+            }
+
+            PointToMove = new Point(x, y);
         }
     }
 }

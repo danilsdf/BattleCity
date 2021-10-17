@@ -39,7 +39,7 @@
 
             public const int CreateRandomWall = 50;
 
-            public const int GameOverTimeout = 200;
+            public const int GameOverTimeout = 150;
 
         }
 
@@ -74,7 +74,19 @@
             public static string LevelMaps = @"..\..\..\Content\LevelMaps\";
 
         }
+        public static int[] XPoints = new[] { 0, 80, 160, 240, 320, 380 };
+
 
         public const int CountLevel = 35;
-}
+
+        public const int PlayerCoolDown = 30;
+
+        public const int EnemyCoolDown = 50;
+
+        public const int HitCount = 10;
+
+        public const int Speed = 40;
+
+        public const int DifPoint = 20;
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using BattleCity.Shared;
 
 namespace BattleCity.Algorithms
 {
@@ -18,7 +19,7 @@ namespace BattleCity.Algorithms
             while (queue.Count != 0)
             {
                 var currentCell = queue.Dequeue();
-                foreach (var neighbour in GetAccessNeighbours(currentCell, 40))
+                foreach (var neighbour in GetAccessNeighbours(currentCell, Constants.Speed))
                 {
                     if (Visited.Contains(neighbour)) continue;
                     if (!queue.Contains(neighbour))
@@ -32,7 +33,7 @@ namespace BattleCity.Algorithms
                     
                     if (neighbour.Equals(finish))
                     {
-                        return RouteRestore(finish);
+                        return RouteRestore(start, finish);
                     }
                 }
             }

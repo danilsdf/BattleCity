@@ -34,12 +34,12 @@ namespace BattleCity.MapItems.TankModule
 
         private bool IsGoingToBorderTile()
         {
-            //var tmp = (OldDirection - NewDirection);
-            //if (tmp == 2 || tmp == -2)
-            //{
-            //    Direction = newDirection;
-            //    return false;
-            //}
+            var tmp = (OldDirection - NewDirection);
+            if (tmp == 2 || tmp == -2)
+            {
+                Direction = NewDirection;
+                return false;
+            }
 
             var offsetX = SpriteRectangle.X % Constants.Size.WidthTile;
             var offsetY = SpriteRectangle.Y % Constants.Size.HeightTile;
