@@ -83,7 +83,7 @@
 
         public const int EnemyCoolDown = 50;
 
-        public const int HitCount = 10;
+        public const int HitCount = 1000;
 
         public const int Speed = 40;
 

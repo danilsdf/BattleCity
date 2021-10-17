@@ -48,6 +48,7 @@ namespace BattleCity.Game
         private int _timerWin;
         private int _timerSpawnWall = Constants.Timer.CreateRandomWall;
 
+        public static EnemyTankType TankType = EnemyTankType.MovingByAlgorithm;
         private static AlgorithmType _currentAlgorithm = AlgorithmType.Bfs;
 
         private SpawnTanks _enemyTanks;
@@ -91,6 +92,13 @@ namespace BattleCity.Game
                 _currentLevel++;
 
             DownloadLevel(_currentLevel);
+        }
+
+        public static void ChangeTankType()
+        {
+            TankType = TankType == EnemyTankType.MovingByAlgorithm
+                ? EnemyTankType.MovingRandomly
+                : EnemyTankType.MovingByAlgorithm;
         }
 
         public void DownloadLevel(int levelNumber)
@@ -240,7 +248,7 @@ namespace BattleCity.Game
                         {
                             x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
 
-                            y = rnd.Next(0, 40) * 10;
+                            y = rnd.Next(0, 10) * 40;
                         }
 
                         new RandomBrickWall(new Point(x, y));
