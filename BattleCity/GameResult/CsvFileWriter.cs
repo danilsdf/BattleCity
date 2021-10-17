@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using BattleCity.Shared;
-using CsvHelper;
-using CsvHelper.Configuration;
 
 namespace BattleCity.GameResult
 {

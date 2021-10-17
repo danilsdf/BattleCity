@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using BattleCity.Algorithms;
+using BattleCity.Algorithms.Search;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using BattleCity.Enums;
 using BattleCity.GameResult;
 using BattleCity.Information;

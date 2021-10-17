@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using BattleCity.GameResult;
 using BattleCity.Shared;
 
 namespace BattleCity.Game

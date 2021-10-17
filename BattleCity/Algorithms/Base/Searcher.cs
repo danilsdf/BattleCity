@@ -5,7 +5,7 @@ using System.Linq;
 using BattleCity.Game;
 using BattleCity.MapItems.StaticItems;
 
-namespace BattleCity.Algorithms
+namespace BattleCity.Algorithms.Base
 {
     public class Searcher
     {
@@ -24,12 +24,12 @@ namespace BattleCity.Algorithms
             return points.Where(CurrentLevel.IsPointEmpty);
         }
 
-        public static IEnumerable<KeyValuePair<int, Point>> GetCostNeighbours(Point cell, int speed)
+        public static IEnumerable<Tuple<int, Point>> GetCostNeighbours(Point cell, int speed)
         {
             return GetAccessNeighbours(cell, speed)
                 .Select(point =>
-                    new KeyValuePair<int, Point>((cell.X + point.Y) / 2, point))
-                .OrderBy(keyValue => keyValue.Key);
+                    new Tuple<int, Point>((cell.X + point.Y) / 2, point))
+                .OrderBy(keyValue => keyValue.Item1);
         }
 
         public static IEnumerable<KeyValuePair<int, Point>> GetAStarCostNeighbours(Point cell, int speed)
