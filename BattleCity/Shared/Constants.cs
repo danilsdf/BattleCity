@@ -67,6 +67,8 @@
 
         public static class Path
         {
+            public const string ResultFilePath = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\GameResults.csv";
+
             public const string SoundPath = @"..\..\..\Content\Media\";
 
             public static string Content = @"..\..\..\Content\Images\";
@@ -75,7 +77,6 @@
 
         }
         public static int[] XPoints = new[] { 0, 80, 160, 240, 320, 380 };
-
 
         public const int CountLevel = 35;
 

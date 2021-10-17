@@ -113,6 +113,7 @@ namespace BattleCity.MapItems.TankModule.Enemy.Base
 
             CurrentLevel.DictionaryObjGame[MapItemKey.TankEnemy].Remove(this);
             shell.Detonation = true;
+            CurrentLevel.Score += _points;
             new DetonationShellBig(shell.Rect.Location, shell.Direction, _points);
         }
     }

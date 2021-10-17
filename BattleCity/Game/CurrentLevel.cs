@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using BattleCity.Enums;
+using BattleCity.GameResult;
 using BattleCity.Information;
 using BattleCity.Interfaces;
 using BattleCity.MapItems.Base;
@@ -22,6 +24,7 @@ namespace BattleCity.Game
 
         public static LevelState LevelState;
         public static Stopwatch Stopwatch = new Stopwatch();
+        public static int Score;
 
         public static int PlayerHealth;
 
@@ -86,10 +89,7 @@ namespace BattleCity.Game
 
         private void TimerWin()
         {
-            if (_currentLevel == Constants.CountLevel)
-                _currentLevel = 1;
-            else
-                _currentLevel++;
+            _currentLevel = 1;
 
             DownloadLevel(_currentLevel);
         }
@@ -164,6 +164,16 @@ namespace BattleCity.Game
             StartGame.GameWindow.Invalidate(StartGame.GameWindow.ClientRectangle);
         }
 
+        public static void StopTimer()
+        {
+            Stopwatch.Stop();
+        }
+
+        public static void StartTimer()
+        {
+            Stopwatch.Restart();
+        }
+
 
         public void Update()
         {
@@ -213,10 +223,11 @@ namespace BattleCity.Game
                 _listShell[i].Update();
             }
 
-
             switch (LevelState)
             {
                 case LevelState.GameOver when _gameOverInformation == null:
+                    var loseResult = new GameResultModel(false, CurrentLevel.Stopwatch.Elapsed, CurrentLevel.Score, "BFS");
+                    CsvFileWriter.AppendGameInfo(loseResult);
                     SoundService.Stop();
                     _gameOverInformation = new GameOverInformation();
                     ListInformation.Add(_gameOverInformation);
@@ -229,6 +240,8 @@ namespace BattleCity.Game
                     if (_timerWin == 0)
                     {
                         SoundService.Stop();
+                        var winResult = new GameResultModel(true, Stopwatch.Elapsed, Score, "BFS");
+                        CsvFileWriter.AppendGameInfo(winResult);
                         TimerWin();
                     }
                     else _timerWin--;

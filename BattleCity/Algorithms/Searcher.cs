@@ -65,7 +65,7 @@ namespace BattleCity.Algorithms
             {
                 if (!Track[currentPoint].Equals(start))
                 {
-                    new ColorPoint(Track[currentPoint], "YellowPoint");
+                    new ColorPoint(Track[currentPoint], "RedPoint");
                     yield return Track[currentPoint];
                 }
 
