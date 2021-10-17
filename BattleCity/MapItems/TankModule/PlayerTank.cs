@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using BattleCity.Algorithms.Search;
+using BattleCity.Algorithms.Strategy;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
@@ -78,16 +79,10 @@ namespace BattleCity.MapItems.TankModule
             IsParked = false;
             OldDirection = Direction;
             var point = PointToMove;
-            var path = BfsSearcher.GetRoute(myPoint, PointToMove);
-            if (path == null)
-            {
-                path = AStarSearcher.GetRoute(myPoint, PointToMove);
-            }
-
-            if (path == null)
-            {
-                path = DfsSearcher.GetRoute(myPoint, PointToMove);
-            }
+            var path = BfsSearcher.GetRoute(myPoint, PointToMove) ?? (AStarSearcher.GetRoute(myPoint, PointToMove)
+                                                                      ?? DfsSearcher.GetRoute(myPoint, PointToMove));
+            var value = MiniMax.Minimax(new Tuple<int, Point>(0, myPoint), point, 0, 0, true);
+            //var value = ExpectimaxAlgorithm.Expectimax(new Tuple<int, Point>(0, myPoint), point, true);
 
             if (path != null)
             {
