@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using BattleCity.Algorithms.Strategy.Model;
 using BattleCity.Game;
 using BattleCity.MapItems.StaticItems;
 
@@ -38,6 +39,18 @@ namespace BattleCity.Algorithms.Base
                 .Select(point =>
                     new KeyValuePair<int, Point>(((cell.X + point.Y) / 2) + GetHeuristicPathLength(cell, point), point))
                 .OrderBy(keyValue => keyValue.Key);
+        }
+
+        public static List<Node> GetNeighboursNodes(Point cell, int speed)
+        {
+            var nodes = GetAccessNeighbours(cell, speed)
+                .Select(point =>
+                    new Node(point, CurrentLevel.GetPointValue(point)))
+                .OrderBy(keyValue => keyValue.Value)
+                .ToList();
+
+            CurrentLevel.AddNodes(nodes);
+            return nodes;
         }
 
         private static int GetHeuristicPathLength(Point from, Point to)

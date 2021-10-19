@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using BattleCity.Algorithms.Search;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
@@ -54,8 +53,8 @@ namespace BattleCity.MapItems.TankModule.Enemy.Base
             var playerPoint = CurrentLevel.Player.Rect.Location;
             OldDirection = Direction;
             var point = playerPoint;
-            var path = BfsSearcher.GetRoute(myPoint, playerPoint);
-            if (path != null) LastPath = path.ToList();
+            var path = GetPath(myPoint, playerPoint);
+            if (path != null && path.Any()) LastPath = path.ToList();
 
             if (LastPath != null && LastPath.Any())
             {

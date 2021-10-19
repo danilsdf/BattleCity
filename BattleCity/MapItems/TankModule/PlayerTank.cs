@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using BattleCity.Algorithms.Search;
 using BattleCity.Algorithms.Strategy;
+using BattleCity.Algorithms.Strategy.Model;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
@@ -79,26 +79,28 @@ namespace BattleCity.MapItems.TankModule
             IsParked = false;
             OldDirection = Direction;
             var point = PointToMove;
-            var path = BfsSearcher.GetRoute(myPoint, PointToMove) ?? (AStarSearcher.GetRoute(myPoint, PointToMove)
-                                                                      ?? DfsSearcher.GetRoute(myPoint, PointToMove));
-            var value = MiniMax.Minimax(new Tuple<int, Point>(0, myPoint), point, 0, 0, true);
-            //var value = ExpectimaxAlgorithm.Expectimax(new Tuple<int, Point>(0, myPoint), point, true);
+            var path = GetPath(myPoint, PointToMove);
+            if (path != null && path.Any()) LastPath = path.ToList();
 
-            if (path != null)
-            {
-                LastPath = path.ToList();
-            }
+            var value = MiniMax.Minimax(new Node(myPoint, 0), point, 0, 0, true);
+            //var value = ExpectimaxAlgorithm.Expectimax(new Node(myPoint,0), point, true);
 
-            if (LastPath != null && LastPath.Any())
+            //if (LastPath != null && LastPath.Any())
+            //{
+            //    point = LastPath.Last();
+            //    LastPath.RemoveAt(0);
+            //    while (point.Equals(myPoint) && LastPath.Any())
+            //    {
+            //        point = LastPath.Last();
+            //        LastPath.RemoveAt(0);
+            //    }
+            //    if (point.Equals(myPoint)) point = PointToMove;
+            //}
+
+            foreach (var node in CurrentLevel.Nodes.Where(node => Math.Abs(node.Value - value) < 0.01))
             {
-                point = LastPath.Last();
-                LastPath.RemoveAt(0);
-                while (point.Equals(myPoint) && LastPath.Any())
-                {
-                    point = LastPath.Last();
-                    LastPath.RemoveAt(0);
-                }
-                if (point.Equals(myPoint)) point = PointToMove;
+                point = node.Point;
+                break;;
             }
 
             //todo check shell in direction to an eagle

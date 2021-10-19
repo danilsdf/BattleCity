@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using BattleCity.Algorithms.Base;
+using BattleCity.Algorithms.Strategy.Model;
 using BattleCity.Shared;
 using static System.Int32;
 
@@ -8,30 +10,25 @@ namespace BattleCity.Algorithms.Strategy
 {
     public class ExpectimaxAlgorithm : Searcher
     {
-        public static int Expectimax(Tuple<int, Point> start, Point finish, bool isMax)
+        public static double Expectimax(Node start, Point finish, bool isMax)
         {
-            if (start.Item2.Equals(finish)) return start.Item1;
-            int bestValue;
+            if (start.Point.Equals(finish)) return start.Value;
+            double bestValue;
 
             if (isMax)
             {
-                bestValue = MinValue;
-                foreach (var neighbour in GetCostNeighbours(start.Item2, Constants.Speed))
-                {
-                    var value = Expectimax(neighbour, finish, false);
-                    bestValue = Math.Max(bestValue, value);
-                }
-                start = new Tuple<int, Point>(bestValue, start.Item2);
-                return bestValue;
+                bestValue = GetNeighboursNodes(start.Point, Constants.Speed)
+                    .Select(neighbour => Expectimax(neighbour, finish, false))
+                    .Concat(new double[] {MinValue}).Max();
+            }
+            else
+            {
+                bestValue = GetNeighboursNodes(start.Point, Constants.Speed)
+                    .Select(neighbour => Expectimax(neighbour, finish, true))
+                    .Concat(new double[] {MaxValue}).Min();
             }
 
-            bestValue = MaxValue;
-            foreach (var neighbour in GetCostNeighbours(start.Item2, Constants.Speed))
-            {
-                var value = Expectimax(neighbour, finish, true);
-                bestValue = Math.Min(bestValue, value);
-            }
-            start = new Tuple<int, Point>(bestValue, start.Item2);
+            start.Value = bestValue;
             return bestValue;
         }
     }

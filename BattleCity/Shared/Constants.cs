@@ -76,7 +76,7 @@
             public static string LevelMaps = @"..\..\..\Content\LevelMaps\";
 
         }
-        public static int[] XPoints = new[] { 0, 80, 160, 240, 320, 380 };
+        public static int[] XPoints = new[] { 0, 80, 160, 320, 380 };
 
         public const int CountLevel = 35;
 
@@ -86,7 +86,7 @@
 
         public const int HitCount = 1000;
 
-        public const int Speed = 40;
+        public const int Speed = 20;
 
         public const int DifPoint = 20;
     }

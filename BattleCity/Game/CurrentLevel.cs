@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using BattleCity.Algorithms.Strategy.Model;
 using BattleCity.Enums;
 using BattleCity.GameResult;
 using BattleCity.Information;
@@ -11,6 +12,7 @@ using BattleCity.Interfaces;
 using BattleCity.MapItems.Base;
 using BattleCity.MapItems.StaticItems;
 using BattleCity.MapItems.TankModule;
+using BattleCity.MapItems.TankModule.Enemy.Base;
 using BattleCity.Shared;
 using BattleCity.SoundPart;
 
@@ -40,6 +42,7 @@ namespace BattleCity.Game
 
         public static List<IDraw> ListInformation;
         public static AlgorithmInformation AlgorithmInformation;
+        public static List<Node> Nodes = new List<Node>();
 
         public static PlayerTank Player;
         private Eagle _eagle;
@@ -51,7 +54,7 @@ namespace BattleCity.Game
         private int _timerSpawnWall = Constants.Timer.CreateRandomWall;
 
         public static EnemyTankType TankType = EnemyTankType.MovingByAlgorithm;
-        private static AlgorithmType _currentAlgorithm = AlgorithmType.Bfs;
+        public static AlgorithmType CurrentAlgorithm = AlgorithmType.Bfs;
 
         private SpawnTanks _enemyTanks;
         private string _tanksFromMap;
@@ -388,16 +391,34 @@ namespace BattleCity.Game
                               || enemy.Rect.Y > point.Y - 20 && enemy.Rect.Y < point.Y + 60);
         }
 
+        public static double GetPointValue(Point point)
+        {
+            var minDistance = DictionaryObjGame[MapItemKey.TankEnemy]
+                .Select(enemy => GetDistance(point, enemy.Rect.Location)).Concat(new[] {double.MaxValue}).Min();
+            return -minDistance;
+        }
+
+        public static void AddNodes(IEnumerable<Node> nodes)
+        {
+            Nodes.AddRange(nodes);
+        }
+
+        private static double GetDistance(Point first, Point second)
+        {
+            return Math.Sqrt(Math.Pow((second.X - first.X), 2) + Math.Pow((second.Y - first.Y), 2));
+        }
+
         public static void ChangeAlgorithm()
         {
-            _currentAlgorithm = _currentAlgorithm switch
+            CurrentAlgorithm = CurrentAlgorithm switch
             {
                 AlgorithmType.Bfs => AlgorithmType.Dfs,
                 AlgorithmType.Dfs => AlgorithmType.UniformCostSearch,
-                AlgorithmType.UniformCostSearch => AlgorithmType.Bfs,
-                _ => _currentAlgorithm
+                AlgorithmType.UniformCostSearch => AlgorithmType.AStar,
+                AlgorithmType.AStar => AlgorithmType.Bfs,
+                _ => CurrentAlgorithm
             };
-            AlgorithmInformation.Change(_currentAlgorithm);
+            AlgorithmInformation.Change(CurrentAlgorithm);
         }
 
         public void Clear()
