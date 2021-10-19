@@ -228,7 +228,7 @@ namespace BattleCity.Game
             switch (LevelState)
             {
                 case LevelState.GameOver when _gameOverInformation == null:
-                    var loseResult = new GameResultModel(false, CurrentLevel.Stopwatch.Elapsed, CurrentLevel.Score, "BFS");
+                    var loseResult = new GameResultModel(false, Stopwatch.Elapsed, Score, CurrentAlgorithm.ToString());
                     CsvFileWriter.AppendGameInfo(loseResult);
                     SoundService.Stop();
                     _gameOverInformation = new GameOverInformation();
@@ -242,7 +242,7 @@ namespace BattleCity.Game
                     if (_timerWin == 0)
                     {
                         SoundService.Stop();
-                        var winResult = new GameResultModel(true, Stopwatch.Elapsed, Score, "BFS");
+                        var winResult = new GameResultModel(true, Stopwatch.Elapsed, Score, CurrentAlgorithm.ToString());
                         CsvFileWriter.AppendGameInfo(winResult);
                         TimerWin();
                     }

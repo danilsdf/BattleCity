@@ -44,6 +44,7 @@ namespace BattleCity.Algorithms.Base
         public static List<Node> GetNeighboursNodes(Point cell, int speed)
         {
             var nodes = GetAccessNeighbours(cell, speed)
+                .Where(point => !CurrentLevel.Nodes.Exists(node=>node.Point.Equals(cell)))
                 .Select(point =>
                     new Node(point, CurrentLevel.GetPointValue(point)))
                 .OrderBy(keyValue => keyValue.Value)
