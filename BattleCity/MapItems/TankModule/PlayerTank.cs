@@ -82,25 +82,16 @@ namespace BattleCity.MapItems.TankModule
             var path = GetPath(myPoint, PointToMove);
             if (path != null && path.Any()) LastPath = path.ToList();
 
-            var value = MiniMax.Minimax(new Node(myPoint, 0), point, 0, 0, true);
-            //var value = ExpectimaxAlgorithm.Expectimax(new Node(myPoint,0), point, true);
-
-            //if (LastPath != null && LastPath.Any())
-            //{
-            //    point = LastPath.Last();
-            //    LastPath.RemoveAt(0);
-            //    while (point.Equals(myPoint) && LastPath.Any())
-            //    {
-            //        point = LastPath.Last();
-            //        LastPath.RemoveAt(0);
-            //    }
-            //    if (point.Equals(myPoint)) point = PointToMove;
-            //}
-
-            foreach (var node in CurrentLevel.Nodes.Where(node => Math.Abs(node.Value - value) < 0.01))
+            if (LastPath != null && LastPath.Any())
             {
-                point = node.Point;
-                break;;
+                point = LastPath.Last();
+                LastPath.RemoveAt(0);
+                while (point.Equals(myPoint) && LastPath.Any())
+                {
+                    point = LastPath.Last();
+                    LastPath.RemoveAt(0);
+                }
+                if (point.Equals(myPoint)) point = PointToMove;
             }
 
             //todo check shell in direction to an eagle
