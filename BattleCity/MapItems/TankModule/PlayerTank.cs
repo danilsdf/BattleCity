@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using BattleCity.Algorithms;
+using BattleCity.Algorithms.Strategy;
+using BattleCity.Algorithms.Strategy.Model;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
@@ -15,7 +16,7 @@ namespace BattleCity.MapItems.TankModule
     public class PlayerTank : ActiveTank, IResponse, IAddTank
     {
         private int _numberOfHits;
-        public Point PointToMove = new Point(0,0);
+        public Point PointToMove = new Point(80,80);
         public PlayerTank(Rectangle rect, int speed, Direction direction, int shellSpeed)
             : base(rect, speed, direction, shellSpeed)
         {
@@ -50,7 +51,7 @@ namespace BattleCity.MapItems.TankModule
             {
                 CurrentLevel.DictionaryObjGame[MapItemKey.Player].Remove(this);
                 shell.Detonation = true;
-                CurrentLevel.LevelState = LevelState.GameOver; //todo
+                CurrentLevel.LevelState = LevelState.GameOver;
                 SoundService.Stop();
             }
             else _numberOfHits++;
@@ -71,13 +72,15 @@ namespace BattleCity.MapItems.TankModule
         protected void Moving()
         {
             var myPoint = Rect.Location;
+            myPoint.Y += -myPoint.Y % 20 ;
+            
             if (myPoint.Equals(PointToMove)) GenerateNewPoint();
             new ColorPoint(PointToMove, "RedPoint");
             IsParked = false;
             OldDirection = Direction;
             var point = PointToMove;
-            var path = AStarSearcher.GetRoute(myPoint, PointToMove);
-            if (path != null) LastPath = path.ToList();
+            var path = GetPath(myPoint, PointToMove);
+            if (path != null && path.Any()) LastPath = path.ToList();
 
             if (LastPath != null && LastPath.Any())
             {
@@ -93,7 +96,6 @@ namespace BattleCity.MapItems.TankModule
 
             //todo check shell in direction to an eagle
 
-
             if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y + Constants.DifPoint))) NewDirection = Direction.Down;
              else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y - Constants.DifPoint))) NewDirection = Direction.Up;
              else if(point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X + Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Right;
@@ -105,7 +107,7 @@ namespace BattleCity.MapItems.TankModule
             }
             else if (CurrentLevel.IsFire(point))
             {
-                Cooldown = Constants.EnemyCoolDown;
+                Cooldown = Constants.PlayerCoolDown;
                 Fire(MapItemKey.Player);
             }
 

@@ -4,6 +4,7 @@
     {
         Dfs = 1,
         Bfs,
-        UniformCostSearch
+        UniformCostSearch,
+        AStar,
     }
 }

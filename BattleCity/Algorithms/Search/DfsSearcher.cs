@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+using BattleCity.Algorithms.Base;
 using BattleCity.Shared;
 
-namespace BattleCity.Algorithms
+namespace BattleCity.Algorithms.Search
 {
     public class DfsSearcher : Searcher
     {
@@ -33,7 +33,7 @@ namespace BattleCity.Algorithms
                     }
                     if (neighbour.Equals(finish))
                     {
-                        return RouteRestore(finish).Reverse();
+                        return RouteRestore(start, finish);
                     }
                 }
             }

@@ -21,6 +21,7 @@ namespace BattleCity.Information
                 AlgorithmType.Dfs => GetImage("Dfs"),
                 AlgorithmType.Bfs => GetImage("Bfs"),
                 AlgorithmType.UniformCostSearch => GetImage("Ucs"),
+                AlgorithmType.AStar => GetImage("Ucs"),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }

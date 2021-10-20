@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using BattleCity.Algorithms.Base;
 using BattleCity.Algorithms.Model;
 using BattleCity.Shared;
 
-namespace BattleCity.Algorithms
+namespace BattleCity.Algorithms.Search
 {
     internal class UniformCostSearcher : Searcher
     {
@@ -18,7 +19,7 @@ namespace BattleCity.Algorithms
             while (!fringe.IsEmpty)
             {
                 var currentCell = fringe.Dequeue();
-                foreach (var neighbour in GetCostNeighbours(currentCell.Value, Constants.Speed))
+                foreach (var neighbour in GetAStarCostNeighbours(currentCell.Value, Constants.Speed))
                 {
                     if (Visited.Contains(neighbour.Value)) continue;
                     if (!fringe.Contains(neighbour.Value))

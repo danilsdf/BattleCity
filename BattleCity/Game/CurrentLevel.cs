@@ -4,12 +4,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using BattleCity.Algorithms.Strategy.Model;
 using BattleCity.Enums;
+using BattleCity.GameResult;
 using BattleCity.Information;
 using BattleCity.Interfaces;
 using BattleCity.MapItems.Base;
 using BattleCity.MapItems.StaticItems;
 using BattleCity.MapItems.TankModule;
+using BattleCity.MapItems.TankModule.Enemy.Base;
 using BattleCity.Shared;
 using BattleCity.SoundPart;
 
@@ -22,6 +25,7 @@ namespace BattleCity.Game
 
         public static LevelState LevelState;
         public static Stopwatch Stopwatch = new Stopwatch();
+        public static int Score;
 
         public static int PlayerHealth;
 
@@ -38,6 +42,7 @@ namespace BattleCity.Game
 
         public static List<IDraw> ListInformation;
         public static AlgorithmInformation AlgorithmInformation;
+        public static List<Node> Nodes = new List<Node>();
 
         public static PlayerTank Player;
         private Eagle _eagle;
@@ -48,7 +53,8 @@ namespace BattleCity.Game
         private int _timerWin;
         private int _timerSpawnWall = Constants.Timer.CreateRandomWall;
 
-        private static AlgorithmType _currentAlgorithm = AlgorithmType.Bfs;
+        public static EnemyTankType TankType = EnemyTankType.MovingByAlgorithm;
+        public static AlgorithmType CurrentAlgorithm = AlgorithmType.Bfs;
 
         private SpawnTanks _enemyTanks;
         private string _tanksFromMap;
@@ -85,12 +91,16 @@ namespace BattleCity.Game
 
         private void TimerWin()
         {
-            if (_currentLevel == Constants.CountLevel)
-                _currentLevel = 1;
-            else
-                _currentLevel++;
+            _currentLevel = 1;
 
             DownloadLevel(_currentLevel);
+        }
+
+        public static void ChangeTankType()
+        {
+            TankType = TankType == EnemyTankType.MovingByAlgorithm
+                ? EnemyTankType.MovingRandomly
+                : EnemyTankType.MovingByAlgorithm;
         }
 
         public void DownloadLevel(int levelNumber)
@@ -156,6 +166,16 @@ namespace BattleCity.Game
             StartGame.GameWindow.Invalidate(StartGame.GameWindow.ClientRectangle);
         }
 
+        public static void StopTimer()
+        {
+            Stopwatch.Stop();
+        }
+
+        public static void StartTimer()
+        {
+            Stopwatch.Restart();
+        }
+
 
         public void Update()
         {
@@ -205,10 +225,11 @@ namespace BattleCity.Game
                 _listShell[i].Update();
             }
 
-
             switch (LevelState)
             {
                 case LevelState.GameOver when _gameOverInformation == null:
+                    var loseResult = new GameResultModel(false, Stopwatch.Elapsed, Score, CurrentAlgorithm.ToString());
+                    CsvFileWriter.AppendGameInfo(loseResult);
                     SoundService.Stop();
                     _gameOverInformation = new GameOverInformation();
                     ListInformation.Add(_gameOverInformation);
@@ -221,6 +242,8 @@ namespace BattleCity.Game
                     if (_timerWin == 0)
                     {
                         SoundService.Stop();
+                        var winResult = new GameResultModel(true, Stopwatch.Elapsed, Score, CurrentAlgorithm.ToString());
+                        CsvFileWriter.AppendGameInfo(winResult);
                         TimerWin();
                     }
                     else _timerWin--;
@@ -240,7 +263,7 @@ namespace BattleCity.Game
                         {
                             x = Constants.XPoints[rnd.Next(0, Constants.XPoints.Length - 1)];
 
-                            y = rnd.Next(0, 40) * 10;
+                            y = rnd.Next(0, 10) * 40;
                         }
 
                         new RandomBrickWall(new Point(x, y));
@@ -368,16 +391,34 @@ namespace BattleCity.Game
                               || enemy.Rect.Y > point.Y - 20 && enemy.Rect.Y < point.Y + 60);
         }
 
+        public static double GetPointValue(Point point)
+        {
+            var minDistance = DictionaryObjGame[MapItemKey.TankEnemy]
+                .Select(enemy => GetDistance(point, enemy.Rect.Location)).Concat(new[] {double.MaxValue}).Min();
+            return -minDistance;
+        }
+
+        public static void AddNodes(IEnumerable<Node> nodes)
+        {
+            Nodes.AddRange(nodes);
+        }
+
+        private static double GetDistance(Point first, Point second)
+        {
+            return Math.Sqrt(Math.Pow((second.X - first.X), 2) + Math.Pow((second.Y - first.Y), 2));
+        }
+
         public static void ChangeAlgorithm()
         {
-            _currentAlgorithm = _currentAlgorithm switch
+            CurrentAlgorithm = CurrentAlgorithm switch
             {
                 AlgorithmType.Bfs => AlgorithmType.Dfs,
                 AlgorithmType.Dfs => AlgorithmType.UniformCostSearch,
-                AlgorithmType.UniformCostSearch => AlgorithmType.Bfs,
-                _ => _currentAlgorithm
+                AlgorithmType.UniformCostSearch => AlgorithmType.AStar,
+                AlgorithmType.AStar => AlgorithmType.Bfs,
+                _ => CurrentAlgorithm
             };
-            AlgorithmInformation.Change(_currentAlgorithm);
+            AlgorithmInformation.Change(CurrentAlgorithm);
         }
 
         public void Clear()

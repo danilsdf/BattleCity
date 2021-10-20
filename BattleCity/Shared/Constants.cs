@@ -67,6 +67,8 @@
 
         public static class Path
         {
+            public const string ResultFilePath = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\GameResults.csv";
+
             public const string SoundPath = @"..\..\..\Content\Media\";
 
             public static string Content = @"..\..\..\Content\Images\";
@@ -74,8 +76,7 @@
             public static string LevelMaps = @"..\..\..\Content\LevelMaps\";
 
         }
-        public static int[] XPoints = new[] { 0, 80, 160, 240, 320, 380 };
-
+        public static int[] XPoints = new[] { 0, 80, 160, 320, 380 };
 
         public const int CountLevel = 35;
 
@@ -83,9 +84,9 @@
 
         public const int EnemyCoolDown = 50;
 
-        public const int HitCount = 10;
+        public const int HitCount = 1000;
 
-        public const int Speed = 40;
+        public const int Speed = 20;
 
         public const int DifPoint = 20;
     }

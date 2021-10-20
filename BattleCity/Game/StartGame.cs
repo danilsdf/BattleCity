@@ -111,6 +111,7 @@ namespace BattleCity.Game
                 }
                 else if (Keyboard.Enter && GameState == GameState.Menu && menu.MenuState == MenuState.Game)
                 {
+                    CurrentLevel.StartTimer();
                     GameState = GameState.Game;
                     _gameWindow.BringToFront();
                     menu.ResetPosition();

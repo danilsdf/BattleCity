@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using BattleCity.Algorithms.Strategy.Model;
 using BattleCity.Game;
 using BattleCity.MapItems.StaticItems;
 
-namespace BattleCity.Algorithms
+namespace BattleCity.Algorithms.Base
 {
     public class Searcher
     {
@@ -24,12 +25,12 @@ namespace BattleCity.Algorithms
             return points.Where(CurrentLevel.IsPointEmpty);
         }
 
-        public static IEnumerable<KeyValuePair<int, Point>> GetCostNeighbours(Point cell, int speed)
+        public static IEnumerable<Tuple<int, Point>> GetCostNeighbours(Point cell, int speed)
         {
             return GetAccessNeighbours(cell, speed)
                 .Select(point =>
-                    new KeyValuePair<int, Point>((cell.X + point.Y) / 2, point))
-                .OrderBy(keyValue => keyValue.Key);
+                    new Tuple<int, Point>((cell.X + point.Y) / 2, point))
+                .OrderBy(keyValue => keyValue.Item1);
         }
 
         public static IEnumerable<KeyValuePair<int, Point>> GetAStarCostNeighbours(Point cell, int speed)
@@ -38,6 +39,19 @@ namespace BattleCity.Algorithms
                 .Select(point =>
                     new KeyValuePair<int, Point>(((cell.X + point.Y) / 2) + GetHeuristicPathLength(cell, point), point))
                 .OrderBy(keyValue => keyValue.Key);
+        }
+
+        public static List<Node> GetNeighboursNodes(Point cell, int speed)
+        {
+            var nodes = GetAccessNeighbours(cell, speed)
+                .Where(point => !CurrentLevel.Nodes.Exists(node=>node.Point.Equals(cell)))
+                .Select(point =>
+                    new Node(point, CurrentLevel.GetPointValue(point)))
+                .OrderBy(keyValue => keyValue.Value)
+                .ToList();
+
+            CurrentLevel.AddNodes(nodes);
+            return nodes;
         }
 
         private static int GetHeuristicPathLength(Point from, Point to)
@@ -65,7 +79,7 @@ namespace BattleCity.Algorithms
             {
                 if (!Track[currentPoint].Equals(start))
                 {
-                    new ColorPoint(Track[currentPoint], "YellowPoint");
+                    new ColorPoint(Track[currentPoint], "RedPoint");
                     yield return Track[currentPoint];
                 }
 

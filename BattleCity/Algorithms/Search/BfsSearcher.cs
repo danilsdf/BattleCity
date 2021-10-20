@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using BattleCity.Algorithms.Base;
 using BattleCity.Shared;
 
-namespace BattleCity.Algorithms
+namespace BattleCity.Algorithms.Search
 {
     public class BfsSearcher : Searcher
     {
