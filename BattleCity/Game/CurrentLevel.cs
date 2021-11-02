@@ -91,7 +91,11 @@ namespace BattleCity.Game
 
         private void TimerWin()
         {
+            var rnd = new Random();
+            Constants.HitCount = rnd.Next(1, 10);
             _currentLevel = 1;
+            Score = 0;
+            StartTimer();
 
             DownloadLevel(_currentLevel);
         }
@@ -105,6 +109,7 @@ namespace BattleCity.Game
 
         public void DownloadLevel(int levelNumber)
         {
+            AlgorithmInformation.ChangeTime(Constants.HitCount);
             _timerWin = 50;
 
             Clear();
@@ -116,7 +121,7 @@ namespace BattleCity.Game
             var linesTileMap = File.ReadAllLines(path);
             _tanksFromMap = linesTileMap[26];
 
-            for (var i = 1; i <= 10; i++)
+            for (var i = 1; i <= Constants.CountEnemy / 2; i++)
             {
                 ListInformation.Add(new TankInformation(new Point(27 * Constants.Size.WidthTile, i * Constants.Size.HeightTile)));
                 ListInformation.Add(new TankInformation(new Point(28 * Constants.Size.WidthTile, i * Constants.Size.HeightTile)));
@@ -173,9 +178,9 @@ namespace BattleCity.Game
 
         public static void StartTimer()
         {
-            Stopwatch.Restart();
+            StopTimer();
+            Stopwatch = Stopwatch.StartNew();
         }
-
 
         public void Update()
         {
@@ -224,15 +229,21 @@ namespace BattleCity.Game
             {
                 _listShell[i].Update();
             }
+            var rnd = new Random();
 
             switch (LevelState)
             {
                 case LevelState.GameOver when _gameOverInformation == null:
-                    var loseResult = new GameResultModel(false, Stopwatch.Elapsed, Score, CurrentAlgorithm.ToString());
+                    var loseResult = new GameResultModel(false, Stopwatch.Elapsed, Score);
                     CsvFileWriter.AppendGameInfo(loseResult);
-                    SoundService.Stop();
-                    _gameOverInformation = new GameOverInformation();
-                    ListInformation.Add(_gameOverInformation);
+                    TimerWin();
+                    //Constants.HitCount = rnd.Next(1, 10);
+                    //_currentLevel = 1;
+                    //Score = 0;
+                    //StartTimer();
+                    //SoundService.Stop();
+                    //_gameOverInformation = new GameOverInformation();
+                    //ListInformation.Add(_gameOverInformation);
                     break;
                 case LevelState.GameOver:
                     _gameOverInformation.Update();
@@ -242,7 +253,8 @@ namespace BattleCity.Game
                     if (_timerWin == 0)
                     {
                         SoundService.Stop();
-                        var winResult = new GameResultModel(true, Stopwatch.Elapsed, Score, CurrentAlgorithm.ToString());
+                        StopTimer();
+                        var winResult = new GameResultModel(true, Stopwatch.Elapsed, Score);
                         CsvFileWriter.AppendGameInfo(winResult);
                         TimerWin();
                     }
@@ -255,7 +267,6 @@ namespace BattleCity.Game
                     if (_timerSpawnWall == 0)
                     {
                         _timerSpawnWall = Constants.Timer.CreateRandomWall;
-                        var rnd = new Random();
                         var x = 40;
                         var y = 40;
 
