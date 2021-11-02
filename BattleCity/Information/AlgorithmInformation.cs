@@ -28,7 +28,7 @@ namespace BattleCity.Information
 
         public void ChangeTime(long time)
         {
-            SpriteText = $"{time} ms";
+            SpriteText = $"{time}";
         }
     }
 }

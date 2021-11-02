@@ -1,28 +1,27 @@
 ﻿using System;
+using BattleCity.Shared;
 
 namespace BattleCity.GameResult
 {
     public class GameResultModel
     {
         public bool IsWin { get; set; }
-        public TimeSpan Time { get; set; }
+        public double Time { get; set; }
         public int Score { get; set; }
-        public string Algorithm { get; set; }
         public string Today { get; set; }
 
-        public GameResultModel(bool isWin, TimeSpan time, int score, string algorithm)
+        public GameResultModel(bool isWin, TimeSpan time, int score)
         {
             IsWin = isWin;
-            Time = time;
+            Time = time.TotalSeconds;
             Score = score;
-            Algorithm = algorithm;
             Today = DateTime.Now.ToShortDateString().Replace("/", ".");
         }
 
         public override string ToString()
         {
-            var win = IsWin ? "Win" : "Lose";
-            return $"{win},{Time},{Score},{Algorithm},{Today}";
+            var win = IsWin ? "1" : "0";
+            return $"{win},{Time},{Score},{Constants.HitCount},{Today}";
         }
     }
 }

@@ -111,7 +111,10 @@ namespace BattleCity.Game
                 }
                 else if (Keyboard.Enter && GameState == GameState.Menu && menu.MenuState == MenuState.Game)
                 {
+                    var rnd = new Random();
+                    Constants.HitCount = rnd.Next(1, 10);
                     CurrentLevel.StartTimer();
+                    CurrentLevel.AlgorithmInformation.ChangeTime(Constants.HitCount);
                     GameState = GameState.Game;
                     _gameWindow.BringToFront();
                     menu.ResetPosition();

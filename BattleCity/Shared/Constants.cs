@@ -67,7 +67,7 @@
 
         public static class Path
         {
-            public const string ResultFilePath = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\GameResults.csv";
+            public const string ResultFilePath = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\Lisp\GameResults.csv";
 
             public const string SoundPath = @"..\..\..\Content\Media\";
 
@@ -84,10 +84,14 @@
 
         public const int EnemyCoolDown = 50;
 
-        public const int HitCount = 1000;
+        public static int HitCount { get; set; }
 
         public const int Speed = 20;
 
         public const int DifPoint = 20;
+
+        public const int CountEnemy = 10;
+
+
     }
 }

@@ -1,0 +1,146 @@
+(ql:quickload :fare-csv)
+(ql:quickload "iterate")
+(use-package :iterate)
+
+(defvar maxScore 1200)
+
+ (defvar data
+  (fare-csv:read-csv-file #P"d:/Университет/(5)Fiveth_Semestr/AI_Basic/BattleCity/Lisp/GameResults.csv"))
+
+(defun getThreeWithoutFirst(it)
+	(list (read-from-string (second it))  (parse-integer (third it)) (parse-integer (fourth it))))
+
+(defvar workData
+  (map 'list (lambda (it) (getThreeWithoutFirst it)) (cdr data))
+)
+
+
+(print workdata)
+
+; ----
+(defun average (ns)
+  (/ (apply '+ ns) (float (length ns)))
+)
+
+(defun square (x)
+  (expt x 2)
+)
+
+
+(defvar scoreMean (average (map 'list
+                              (lambda (it) (second it))
+                              workdata
+                         )))
+
+(defvar hitCountMean (average (map 'list
+                                (lambda (it) (third it))
+                                workdata
+                           )))
+
+; number += (X[i] - x_mean) * (Y[i] - y_mean)
+(defvar number (apply '+
+                       (map 'list (lambda (it)
+                                    (* (* (- (second it) scoremean ) (- (third it) hitCountMean)) 3)
+                                  ) workdata
+                       )))
+
+(defvar divisor (apply '+
+                         (map 'list (lambda (it)
+                                      (square (- (third it) hitCountMean))
+                                    ) workdata
+                         )))
+
+(print (format NIL "Number: ~F" number))
+(print(format NIL "Divisor: ~F" divisor))
+
+
+(defvar b1 (/ number divisor))
+(print (format NIL "b1=~F" b1))
+
+; (print (format NIL "HitCountMean=~F" hitCountMean))
+; (print (format NIL "ScoreMean=~F" scoremean ))
+
+; (defvar b0 (- scoremean (* b1 hitCountMean)))
+
+(defvar b0 scoremean)
+(print (format NIL "b0=~F" b0))
+(print (format NIL "Score = ~F*hitCount + ~F" b1 b0))
+(defun getScoreByHitCount (count)
+  (+ b0 (* b1 count))
+)
+
+(defvar rmse (sqrt (/ (apply '+ (map 'list (lambda (it)
+                                           (square (- (second it) (getScoreByHitCount (third it))))
+                                         ) workdata
+                              ))
+                    (length workdata
+                 ))))
+(print (format NIL "RMSE = ~F" rmse))
+(defvar sumOfSquares (apply '+ (map 'list (lambda (it)
+                                          (square (- (second it) scoremean))
+                                        ) workdata
+                             )))
+(defvar sumOfResiduals (apply '+ (map 'list (lambda (it)
+                                            (square (- (second it) (getScoreByHitCount (third it))))
+                                          ) workdata
+                               )))
+(defvar R2 (- 1 (/ sumofresiduals sumofsquares)))
+(print (format NIL "R^2 = ~F" R2))
+
+(print "Second step!")
+
+(defvar timeMean (average (map 'list
+                                (lambda (it) (first it))
+                                workdata
+                           )))
+(print (format NIL "timeMean = ~F" timeMean))
+(defvar timeNumber (apply '+
+                       (map 'list (lambda (it)
+                                    (* (- (first it) timeMean) (- (third it) hitCountmean))
+                                  ) workdata
+                       )))
+(print (format NIL "timeNumber = ~F" timeNumber))
+
+(defvar timeB1 (/ timeNumber divisor))
+(print (format NIL "b1=~F" timeB1))
+
+(defvar timeB0 (- timeMean (* timeB1 hitCountMean)))
+(print (format NIL "b0=~F" timeB0))
+(print (format NIL "Time = ~F * hitCount + ~F" timeB1 timeB0))
+(defun getTimeByHitCount (count)
+  (+ timeB0 (* timeB1 count))
+)
+
+(defvar timeRmse (sqrt (/ (apply '+ (map 'list (lambda (it)
+                                           (square (- (first it) (getTimeByHitCount (third it))))
+                                         ) workdata
+                              ))
+                    (length workdata
+                 ))))
+(print (format NIL "TimeRMSE = ~F" timeRmse))
+
+(defvar timeSumOfSquares (apply '+ (map 'list (lambda (it)
+                                          (square (- (first it) timeMean))
+                                        ) workdata
+                             )))
+(defvar timeSumOfResiduals (apply '+ (map 'list (lambda (it)
+                                            (square (- (first it) (getTimeByHitCount (third it))))
+                                          ) workdata
+                               )))
+(defvar TimeR2 (- 1 (/ timeSumOfResiduals timeSumOfSquares)))
+(print (format NIL "TimeR^2 = ~F" TimeR2))
+
+(defvar i 0)
+
+(defvar newCsvData (map 'list (lambda(it) (list ( if (> maxScore (second it)) 0 1  ) (third it) (- (second it) (mod (second it) 100)) (second it) (first it))) (iter (for i from 1 to 10)
+    (collect (list i  (getScoreByHitCount i) (getTimeByHitCount i))))
+))
+(push (list "Win/Lose" "Time" "Score" "Rounded Score" "Hit Count") newCsvData)
+(print newCsvData)
+(terpri)
+
+(defun export-csv (row-data file)
+  (with-open-file (stream file :direction :output)
+    (fare-csv:write-csv-lines row-data stream)))
+
+(export-csv newCsvData #P"d:/Университет/(5)Fiveth_Semestr/AI_Basic/BattleCity/Lisp/GameResults1.csv")
