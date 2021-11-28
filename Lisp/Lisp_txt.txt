@@ -117,6 +117,7 @@
                               ))
                     (length workdata
                  ))))
+
 (print (format NIL "TimeRMSE = ~F" timeRmse))
 
 (defvar timeSumOfSquares (apply '+ (map 'list (lambda (it)
@@ -129,8 +130,6 @@
                                )))
 (defvar TimeR2 (- 1 (/ timeSumOfResiduals timeSumOfSquares)))
 (print (format NIL "TimeR^2 = ~F" TimeR2))
-
-(defvar i 0)
 
 (defvar newCsvData (map 'list (lambda(it) (list ( if (> maxScore (second it)) 0 1  ) (third it) (- (second it) (mod (second it) 100)) (second it) (first it))) (iter (for i from 1 to 10)
     (collect (list i  (getScoreByHitCount i) (getTimeByHitCount i))))

@@ -1,0 +1,36 @@
+(ql:quickload :fare-csv)
+(ql:quickload "iterate")
+(use-package :iterate)
+
+(defvar data
+  (fare-csv:read-csv-file #P"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\Lisp\GameResults.csv"))
+
+(defun parseTwoColumns (it)
+  (list (parse-integer (second it)) (read-from-string (third it))))
+
+(defvar workData
+  (map 'list (lambda (it) (parseTwoColumns it)) (cdr data)))
+
+; 1а
+;  Σ(X[i])/n
+(defun average (ns)
+  (/ (apply '+ ns) (float (length ns))))
+
+(defvar scoreMean (average (map 'list
+                              (lambda (it) (first it))
+                              workdata)))
+(print scoreMean)
+
+; 1б
+(defun square (x)
+  (expt x 2))
+
+;  Σ(X[i] - x_mean)^2
+(defvar sumOfSquaresForScores (apply '+
+                         (map 'list (lambda (it)
+                                      (square (- (first it) scoreMean))
+                                    ) workdata)))
+
+;  √(Σ(X[i] - x_mean)^2 / n)
+
+(setq timeVar (sqrt (/ sumOfSquaresForScores (length workdata))))
