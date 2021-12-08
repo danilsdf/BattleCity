@@ -2,8 +2,8 @@
 (ql:quickload "iterate")
 (use-package :iterate)
 
-(defvar data
-  (fare-csv:read-csv-file #P"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\Lisp\GameResults.csv"))
+ (defvar data
+  (fare-csv:read-csv-file #P"d:/Университет/(5)Fiveth_Semestr/AI_Basic/BattleCity/Lisp/GameResults.csv"))
 
 (defun parseTwoColumns (it)
   (list (parse-integer (second it)) (read-from-string (third it))))
@@ -19,7 +19,7 @@
 (defvar scoreMean (average (map 'list
                               (lambda (it) (first it))
                               workdata)))
-(print scoreMean)
+(print scoreMean)1
 
 ; 1б
 (defun square (x)

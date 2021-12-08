@@ -22,6 +22,11 @@
 
 (setv apples [])
 
+(defn isEqual[point, secondpoint](
+	do
+	(return (and (= (get point 0) (get secondpoint 0)) (= (get point 1) (get secondpoint 1))))
+))
+
 ; (print walls)
 
 (for [x (range arraySize)](
@@ -31,12 +36,17 @@
     do
     (setv point [])
     (point.append x) (point.append y)
-    (if (and (in point walls) (and (!= point enemyPoint) (!= point userPoint)))
-      (tempArray.append 1) (
-        do
-        (tempArray.append 0)
-        (apples.append point)
-        ))
+    (setv isUser (isEqual point userPoint))
+    (setv isEnemy (isEqual point enemyPoint))
+    (cond
+     [(and (in point walls) (and (not isUser) (not isEnemy)))
+      (tempArray.append 1)]
+     [isUser
+      (tempArray.append 2)]
+     [isEnemy
+      (tempArray.append 3)]
+     [True
+  	  (tempArray.append 0)(apples.append point)])
   ))
   (labirintArray.append tempArray)
 ))
@@ -147,4 +157,8 @@
   ))
 ))
 
-(print (pacmanAction ))
+
+(for [x (range (len (pacmanAction)))](
+  do
+	(print (get (pacmanAction) x))
+))
