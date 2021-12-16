@@ -27,6 +27,17 @@
             public const int WindowClientWidth = 31 * WidthTile;
         }
 
+        public static class Rewards
+        {
+
+            public const int Enemy = -80;
+
+            public const int ConcreteWall = -100;
+
+            public const int Nothing = 0;
+
+            public const int Bonus = 1;
+        }
 
         public static class Timer
         {

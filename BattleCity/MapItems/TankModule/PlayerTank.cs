@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using BattleCity.Algorithms;
+using BattleCity.DQN;
 using BattleCity.Enums;
 using BattleCity.Game;
 using BattleCity.Interfaces;
@@ -70,44 +71,26 @@ namespace BattleCity.MapItems.TankModule
 
         protected void Moving()
         {
-            var myPoint = Rect.Location;
-            if (myPoint.Equals(PointToMove)) GenerateNewPoint();
-            new ColorPoint(PointToMove, "RedPoint");
-            IsParked = false;
-            OldDirection = Direction;
-            var point = PointToMove;
-            var path = AStarSearcher.GetRoute(myPoint, PointToMove);
-            if (path != null) LastPath = path.ToList();
+            var t = new RoomsProblem();
+            var rewards = CurrentLevel.GetRewardsArray();
 
-            if (LastPath != null && LastPath.Any())
-            {
-                point = LastPath.Last();
-                LastPath.RemoveAt(0);
-                while (point.Equals(myPoint) && LastPath.Any())
-                {
-                    point = LastPath.Last();
-                    LastPath.RemoveAt(0);
-                }
-                if (point.Equals(myPoint)) point = PointToMove;
-            }
-
-            //todo check shell in direction to an eagle
+            t.FulfillArray(rewards);
 
 
-            if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y + Constants.DifPoint))) NewDirection = Direction.Down;
-             else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y - Constants.DifPoint))) NewDirection = Direction.Up;
-             else if(point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X + Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Right;
-             else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X - Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Left;
+            //if (point.Y > myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y + Constants.DifPoint))) NewDirection = Direction.Down;
+            // else if (point.Y < myPoint.Y && CurrentLevel.IsPointEmpty(new Point(myPoint.X, myPoint.Y - Constants.DifPoint))) NewDirection = Direction.Up;
+            // else if(point.X > myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X + Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Right;
+            // else if (point.X < myPoint.X && CurrentLevel.IsPointEmpty(new Point(myPoint.X - Constants.DifPoint, myPoint.Y))) NewDirection = Direction.Left;
 
-            if (Cooldown != 0)
-            {
-                Cooldown--;
-            }
-            else if (CurrentLevel.IsFire(point))
-            {
-                Cooldown = Constants.EnemyCoolDown;
-                Fire(MapItemKey.Player);
-            }
+            //if (Cooldown != 0)
+            //{
+            //    Cooldown--;
+            //}
+            //else if (CurrentLevel.IsFire(point))
+            //{
+            //    Cooldown = Constants.EnemyCoolDown;
+            //    Fire(MapItemKey.Player);
+            //}
 
             if (Keyboard.Left)
             {

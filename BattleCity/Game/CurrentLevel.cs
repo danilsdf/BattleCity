@@ -333,16 +333,44 @@ namespace BattleCity.Game
                 return false;
             }
 
-            foreach (var mapItemKey in enums)
+            return enums.SelectMany(mapItemKey => DictionaryObjGame[mapItemKey])
+                .All(baseItem => (point.X != baseItem.Rect.X && point.X + 20 != baseItem.Rect.X) || (point.Y != baseItem.Rect.Y && point.Y + 20 != baseItem.Rect.Y));
+        }
+
+        public static double[,] GetRewardsArray()
+        {
+            var rewards = new double[Constants.Size.SquareCount, Constants.Size.SquareCount];
+
+            for (var x = 0; x < Constants.Size.WidthBoard; x+=20)
             {
-                foreach (var baseItem in DictionaryObjGame[mapItemKey])
+                for (var y = 0; y < Constants.Size.HeightBoard; y+= 20)
                 {
-                    if ((point.X == baseItem.Rect.X || point.X + 20 == baseItem.Rect.X)
-                        && (point.Y == baseItem.Rect.Y || point.Y + 20 == baseItem.Rect.Y)) return false;
+                    var p = new Point(x, y);
+                    if (IsFire(p))
+                    {
+                        rewards[x / 20, y / 20] = Constants.Rewards.Enemy;
+                    } else if (IsWall(p))
+                    {
+                        rewards[x / 20, y / 20] = Constants.Rewards.ConcreteWall;
+                    }
+                    else
+                    {
+                        rewards[x / 20, y / 20] = GetDistanceToClosestEnemy(p);
+                    }
                 }
             }
 
-            return true;
+            return rewards;
+        }
+
+        private static double GetDistanceToClosestEnemy(Point point)
+        {
+            var distance = DictionaryObjGame[MapItemKey.TankEnemy]
+                .Select(enemy => enemy.Rect.Location)
+                .Select(enemyPoint => Math.Pow(point.X - enemyPoint.X, 2) + Math.Pow(point.Y - enemyPoint.Y, 2))
+                .Concat(new[] {double.MaxValue}).Min();
+
+            return Constants.Rewards.Enemy + Math.Sqrt(distance)/10;
         }
 
         public static bool IsPointIsFreeToBuild(Point point)
@@ -364,8 +392,16 @@ namespace BattleCity.Game
         public static bool IsFire(Point point)
         {
             return DictionaryObjGame[MapItemKey.TankEnemy]
-                .Any(enemy => enemy.Rect.X > point.X - 20 && enemy.Rect.X < point.X + 60 
-                              || enemy.Rect.Y > point.Y - 20 && enemy.Rect.Y < point.Y + 60);
+                .Any(enemy => enemy.Rect.X >= point.X && enemy.Rect.X < point.X + 20 
+                              && enemy.Rect.Y >= point.Y && enemy.Rect.Y < point.Y + 20);
+        }
+
+        public static bool IsWall(Point point)
+        {
+            return DictionaryObjGame[MapItemKey.Wall]
+                .Union(DictionaryObjGame[MapItemKey.RandomWall])
+                .Any(enemy => enemy.Rect.X >=- point.X && enemy.Rect.X < point.X + 20
+                              && enemy.Rect.Y >= point.Y && enemy.Rect.Y < point.Y + 20);
         }
 
         public static void ChangeAlgorithm()
