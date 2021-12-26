@@ -82,6 +82,8 @@ namespace BattleCity.MapItems.TankModule
             var path = GetPath(myPoint, PointToMove);
             if (path != null && path.Any()) LastPath = path.ToList();
 
+            var value = MiniMax.Minimax(new Node(myPoint, 0), point, 0, 0, true);
+
             if (LastPath != null && LastPath.Any())
             {
                 point = LastPath.Last();

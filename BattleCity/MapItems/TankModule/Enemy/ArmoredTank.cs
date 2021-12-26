@@ -12,7 +12,7 @@ namespace BattleCity.MapItems.TankModule.Enemy
         private int _numberOfHits;
 
         public ArmoredTank(Point position, Direction direction)
-            : base(new Rectangle(position.X, position.Y, Constants.Size.WidthTank, Constants.Size.HeightTank), 3, direction, 8, 400)
+            : base(new Rectangle(position.X, position.Y, Constants.Size.WidthTank, Constants.Size.HeightTank), Constants.EnemySpeed, direction, 8, 400)
         {
             _numberOfHits = 0;
 

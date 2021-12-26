@@ -44,7 +44,6 @@ namespace BattleCity.MapItems.TankModule
             var offsetX = SpriteRectangle.X % Constants.Size.WidthTile;
             var offsetY = SpriteRectangle.Y % Constants.Size.HeightTile;
 
-
             switch (Direction)
             {
                 case Direction.Left when offsetX == 0:

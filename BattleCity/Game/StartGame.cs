@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using BattleCity.Enums;
@@ -14,10 +15,11 @@ namespace BattleCity.Game
     {
         private readonly CurrentLevel _currentLevel;
         public static GameState GameState;
-
+        public static bool IsConsole;
         private static GameWindow _gameWindow;
         private StartMenu menu;
         private readonly GameOver _gameOver;
+        private readonly Console _console;
         private readonly Timer _timer;
 
         public StartGame(Form form)
@@ -32,6 +34,7 @@ namespace BattleCity.Game
             menu = new StartMenu(form);
             _gameOver = new GameOver(form);
             _gameWindow = new GameWindow(form);
+            _console = new Console(form);
 
             GameState = GameState.Menu;
             StartMenu.MenuControl.BringToFront();
@@ -45,6 +48,11 @@ namespace BattleCity.Game
             _timer.Interval = 20;
             _timer.Tick += Timer_Tick;
             _timer.Start();
+        }
+
+        public void ShowConsole()
+        {
+            _console.Draw();
         }
 
         private void Timer_Tick(object sender, EventArgs e)

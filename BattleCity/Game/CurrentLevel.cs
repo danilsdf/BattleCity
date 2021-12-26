@@ -182,6 +182,30 @@ namespace BattleCity.Game
             Stopwatch = Stopwatch.StartNew();
         }
 
+        public static void ChangeEnemies(int count)
+        {
+            count = count - SpawnTanks._countEnemy;
+            for (var i = 0; i < count; i++)
+            {
+                SpawnTanks._tanksEnemy += 'P';
+                var temp = SpawnTanks._countEnemy + i;
+                if (temp % 2 == 0)
+                    ListInformation.Add(new TankInformation(new Point(28 * Constants.Size.WidthTile, temp * Constants.Size.HeightTile)));
+                else    
+                    ListInformation.Add(new TankInformation(new Point(27 * Constants.Size.WidthTile, temp * Constants.Size.HeightTile)));
+            }
+            SpawnTanks._countEnemy += count;
+        }
+
+        public static void ChangeEnemiesSpeed(int speed)
+        {
+            foreach (var enemy in DictionaryObjGame[MapItemKey.TankEnemy])
+            {
+                ((EnemyTank) enemy).Speed = speed;
+            }
+            
+        }
+
         public void Update()
         {
             if (LevelState == LevelState.Download)
@@ -192,7 +216,7 @@ namespace BattleCity.Game
 
                     var rect = new Rectangle(_spawnPlayer.X, _spawnPlayer.Y, Constants.Size.HeightTank, Constants.Size.WidthTank);
 
-                    Player = new PlayerTank(rect, 5, Direction.Up, 8);
+                    Player = new PlayerTank(rect, Constants.PlayerSpeed, Direction.Up, 8);
                     new TankAppearance(_spawnPlayer, Player);
 
                     _enemyTanks = new SpawnTanks(_tanksFromMap);
@@ -431,6 +455,20 @@ namespace BattleCity.Game
             };
             AlgorithmInformation.Change(CurrentAlgorithm);
         }
+        public static void ChangeAlgorithm(string str)
+        {
+            str = str.Trim();
+            CurrentAlgorithm = str switch
+            {
+                "bfs" => AlgorithmType.Bfs,
+                "dfs" => AlgorithmType.Dfs,
+                "ucs" => AlgorithmType.UniformCostSearch,
+                "a*" => AlgorithmType.AStar,
+                _ => CurrentAlgorithm
+            };
+            AlgorithmInformation.Change(CurrentAlgorithm);
+        }
+
 
         public void Clear()
         {

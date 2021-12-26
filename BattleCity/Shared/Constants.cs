@@ -4,27 +4,27 @@
     {
         public static class Size
         {
-            public const int HeightTile = 20;
+            public static int HeightTile = 20;
 
-            public const int WidthTile = 20;
+            public static int WidthTile = 20;
 
-            public const int HeightTank = 2 * HeightTile;
+            public static int HeightTank = 2 * HeightTile;
 
-            public const int WidthTank = 2 * WidthTile;
+            public static int WidthTank = 2 * WidthTile;
 
-            public const int HeightShell = 7;
+            public static int HeightShell = 7;
 
-            public const int WidthShell = 5;
+            public static int WidthShell = 5;
 
-            public const int SquareCount = 26;
+            public static int SquareCount = 26;
 
-            public const int HeightBoard = SquareCount * HeightTile;
+            public static int HeightBoard = SquareCount * HeightTile;
 
-            public const int WidthBoard = SquareCount * WidthTile;
+            public static int WidthBoard = SquareCount * WidthTile;
 
-            public const int WindowClientHeight = 28 * HeightTile;
+            public static int WindowClientHeight = 28 * HeightTile;
 
-            public const int WindowClientWidth = 31 * WidthTile;
+            public static int WindowClientWidth = 31 * WidthTile;
         }
 
 
@@ -67,7 +67,7 @@
 
         public static class Path
         {
-            public const string ResultFilePath = @"D:\Университет\(5)Fiveth_Semestr\AI_Basic\BattleCity\Lisp\GameResults.csv";
+            public const string ResultFilePath = @"D:\University\(5)Fiveth_Semestr\AI_Basic\BattleCity\Lisp\GameResults.csv";
 
             public const string SoundPath = @"..\..\..\Content\Media\";
 
@@ -80,18 +80,20 @@
 
         public const int CountLevel = 35;
 
-        public const int PlayerCoolDown = 30;
+        public static int PlayerCoolDown = 30;
 
-        public const int EnemyCoolDown = 50;
+        public static int EnemyCoolDown = 50;
 
         public static int HitCount { get; set; }
 
-        public const int Speed = 20;
+        public static int Speed = 20;
 
         public const int DifPoint = 20;
 
-        public const int CountEnemy = 10;
+        public static int CountEnemy = 10;
 
+        public static int EnemySpeed = 4;
 
+        public static int PlayerSpeed = 4;
     }
 }

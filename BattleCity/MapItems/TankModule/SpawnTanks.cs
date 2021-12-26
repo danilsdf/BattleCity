@@ -13,15 +13,15 @@ namespace BattleCity.MapItems.TankModule
         private readonly Point _spawnFirstEnemy;
         private readonly Point _spawnSecondEnemy;
         private readonly Point _spawnThirdEnemy;
-        private int _countEnemy;
+        public static int _countEnemy;
         private Point _spawnPoint;
 
-        private readonly string _tanksEnemy;
+        public static string _tanksEnemy;
         private int _index;
 
         public SpawnTanks(string tanksEnemy)
         {
-            this._tanksEnemy = tanksEnemy;
+            _tanksEnemy = tanksEnemy;
             _index = 0;
 
             _currentlyUsed = 1;
